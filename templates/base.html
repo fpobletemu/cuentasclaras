@@ -13,17 +13,44 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <h1 class="text-2xl font-bold text-green-600">CuentasClaras</h1>
+                    <h1 class="text-xl sm:text-2xl font-bold text-green-600">CuentasClaras</h1>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-gray-700">Hola, {{ current_user.username }}</span>
-                    <a href="{{ url_for('dashboard') }}" class="text-gray-600 hover:text-gray-900">Dashboard</a>
-                    <a href="{{ url_for('profile') }}" class="text-gray-600 hover:text-gray-900">Perfil</a>
-                    <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">Cerrar Sesión</a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <span class="text-gray-700 text-sm">Hola, {{ current_user.username }}</span>
+                    <a href="{{ url_for('dashboard') }}" class="text-gray-600 hover:text-gray-900 text-sm">Dashboard</a>
+                    <a href="{{ url_for('profile') }}" class="text-gray-600 hover:text-gray-900 text-sm">Perfil</a>
+                    <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">Cerrar Sesión</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-gray-700 hover:text-gray-900 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden pb-4">
+                <div class="flex flex-col space-y-3">
+                    <span class="text-gray-700 text-sm font-semibold">Hola, {{ current_user.username }}</span>
+                    <a href="{{ url_for('dashboard') }}" class="text-gray-600 hover:text-gray-900 text-sm py-2">Dashboard</a>
+                    <a href="{{ url_for('profile') }}" class="text-gray-600 hover:text-gray-900 text-sm py-2">Perfil</a>
+                    <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm text-center">Cerrar Sesión</a>
                 </div>
             </div>
         </div>
     </nav>
+    
+    <script>
+        document.getElementById('mobile-menu-button')?.addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
     {% endif %}
 
     <main class="{% if current_user.is_authenticated %}py-8{% endif %}">

@@ -5,7 +5,7 @@
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Estadísticas -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <div class="flex items-center justify-between">
                 <div>
@@ -64,10 +64,10 @@
     </div>
 
     <!-- Botón Agregar Deudor -->
-    <div class="mb-6 flex justify-between items-center">
+    <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 class="text-2xl font-bold text-gray-900">Mis Deudores</h2>
         <button onclick="document.getElementById('modal-add-debtor').classList.remove('hidden')" 
-                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
+                class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -76,7 +76,7 @@
     </div>
 
     <!-- Lista de Deudores -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {% for debtor in debtors %}
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition duration-200">
             <div class="flex justify-between items-start mb-4">
@@ -123,8 +123,8 @@
 </div>
 
 <!-- Modal: Agregar Deudor -->
-<div id="modal-add-debtor" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-xl shadow-xl p-8 max-w-md w-full mx-4">
+<div id="modal-add-debtor" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-xl p-6 sm:p-8 max-w-md w-full">
         <div class="flex justify-between items-center mb-6">
             <h3 class="text-2xl font-bold text-gray-900">Agregar Deudor</h3>
             <button onclick="document.getElementById('modal-add-debtor').classList.add('hidden')" 
