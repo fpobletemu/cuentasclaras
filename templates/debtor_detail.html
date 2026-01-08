@@ -6,7 +6,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
     <div class="mb-6">
-        <a href="{{ url_for('dashboard') }}" class="text-green-600 hover:text-green-700 flex items-center gap-2 mb-4 text-sm sm:text-base">
+        <a href="{{ url_for('main.dashboard') }}" class="text-green-600 hover:text-green-700 flex items-center gap-2 mb-4 text-sm sm:text-base">
             <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
@@ -27,11 +27,18 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <a href="{{ url_for('debtor.export_pdf', debtor_id=debtor.id) }}" 
+                       class="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm sm:text-base flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Exportar PDF
+                    </a>
                     <button onclick="document.getElementById('modal-edit-debtor').classList.remove('hidden')" 
                             class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm sm:text-base">
                         Editar
                     </button>
-                    <form method="POST" action="{{ url_for('delete_debtor', debtor_id=debtor.id) }}" 
+                    <form method="POST" action="{{ url_for('debtor.delete', debtor_id=debtor.id) }}" 
                           onsubmit="return confirm('¿Eliminar este deudor y todas sus deudas?')" class="w-full sm:w-auto">
                         <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm sm:text-base">
                             Eliminar
@@ -78,16 +85,29 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
             <div class="flex flex-col lg:flex-row justify-between items-start gap-4">
                 <div class="flex-1">
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="text-2xl font-bold text-gray-900">{{ current_user.format_currency(debt.amount) }}</span>
-                        <span class="{% if debt.paid %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %} text-xs font-semibold px-3 py-1 rounded-full">
-                            {% if debt.paid %}PAGADO{% else %}PENDIENTE{% endif %}
-                        </span>
-                        {% if debt.has_installments %}
-                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
-                            CON CUOTAS
-                        </span>
-                        {% endif %}
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <span class="text-2xl font-bold text-gray-900">{{ current_user.format_currency(debt.amount) }}</span>
+                            <span class="{% if debt.paid %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %} text-xs font-semibold px-3 py-1 rounded-full">
+                                {% if debt.paid %}PAGADO{% else %}PENDIENTE{% endif %}
+                            </span>
+                            {% if debt.has_installments %}
+                            <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
+                                CON CUOTAS
+                            </span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Botón Editar -->
+                        <button type="button" 
+                                onclick="document.getElementById('modal-edit-{{ debt.id }}').classList.remove('hidden')"
+                                class="bg-amber-100 hover:bg-amber-200 text-amber-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 whitespace-nowrap"
+                                title="Editar Deuda">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            <span class="hidden sm:inline">Editar</span>
+                        </button>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
@@ -132,33 +152,318 @@
                         <p class="text-sm text-gray-700"><strong>Notas:</strong> {{ debt.notes }}</p>
                     </div>
                     {% endif %}
+                    
+                    <!-- Archivos Adjuntos -->
+                    {% set debt_files = debt.get_debt_attachments() %}
+                    {% set payment_files = debt.get_payment_attachments() %}
+                    {% if debt_files or payment_files %}
+                    <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <p class="text-sm font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                            </svg>
+                            Archivos Adjuntos ({{ debt.count_attachments() }})
+                        </p>
+                        
+                        {% if debt_files %}
+                        <div class="mb-2">
+                            <p class="text-xs font-medium text-blue-800 mb-1">Documentos de Deuda:</p>
+                            <div class="space-y-1">
+                                {% for file in debt_files %}
+                                <a href="{{ url_for('debt.download_file', debt_id=debt.id, filename=file) }}" 
+                                   class="text-xs text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    {{ file.split('_', 2)[2] if '_' in file else file }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if payment_files %}
+                        <div>
+                            <p class="text-xs font-medium text-green-800 mb-1">Evidencias de Pago:</p>
+                            <div class="space-y-1">
+                                {% for file in payment_files %}
+                                <a href="{{ url_for('debt.download_file', debt_id=debt.id, filename=file) }}" 
+                                   class="text-xs text-green-600 hover:text-green-800 hover:underline flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    {{ file.split('_', 2)[2] if '_' in file else file }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Historial de Cambios -->
+                    {% if debt.history %}
+                    <div class="mt-4">
+                        <button type="button" 
+                                onclick="document.getElementById('history-{{ debt.id }}').classList.toggle('hidden')"
+                                class="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span class="text-sm font-medium text-gray-700">Historial de Cambios ({{ debt.history|length }})</span>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        
+                        <div id="history-{{ debt.id }}" class="hidden mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <div class="space-y-3">
+                                {% for record in debt.history %}
+                                <div class="flex gap-3">
+                                    <div class="flex-shrink-0">
+                                        {% if record.action_type == 'created' %}
+                                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                            </svg>
+                                        </div>
+                                        {% elif record.action_type == 'installment_paid' %}
+                                        <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                            </svg>
+                                        </div>
+                                        {% elif record.action_type == 'marked_paid' %}
+                                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                        {% elif record.action_type == 'edited' %}
+                                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                        </div>
+                                        {% elif record.action_type == 'deleted' %}
+                                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </div>
+                                        {% else %}
+                                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900">{{ record.description }}</p>
+                                        <p class="text-xs text-gray-500 mt-0.5">{{ record.created_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
 
-                <div class="w-full lg:w-auto lg:ml-4 flex flex-row lg:flex-col gap-2">
+                <!-- Botones de Acción -->
+                <div class="w-full lg:w-auto grid grid-cols-2 lg:flex lg:flex-col gap-2">
                     {% if not debt.paid %}
                         {% if debt.has_installments and debt.installments_paid < debt.installments_total %}
-                        <form method="POST" action="{{ url_for('pay_installment', debt_id=debt.id) }}" class="inline">
+                        <form method="POST" action="{{ url_for('debt.pay_installment', debt_id=debt.id) }}">
                             <button type="submit" 
-                                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap">
-                                Pagar Cuota
+                                    class="w-full lg:w-32 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
+                                    title="Pagar Cuota">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                                </svg>
+                                <span>Pagar Cuota</span>
                             </button>
                         </form>
                         {% endif %}
                         
-                        <form method="POST" action="{{ url_for('mark_paid', debt_id=debt.id) }}" class="inline">
-                            <button type="submit" 
-                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap">
-                                Marcar Pagado
-                            </button>
-                        </form>
+                        {% if not debt.has_installments %}
+                        <button type="button" 
+                                onclick="document.getElementById('modal-mark-paid-{{ debt.id }}').classList.remove('hidden')"
+                                class="w-full lg:w-32 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
+                                title="Marcar como Pagado">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Marcar Pagado</span>
+                        </button>
+                        {% endif %}
+                    {% else %}
+                        <!-- Indicador visual de deuda pagada -->
+                        <button type="button" 
+                                disabled
+                                class="w-full lg:w-32 bg-green-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-2 whitespace-nowrap cursor-default"
+                                title="Deuda Pagada">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>Pagado</span>
+                        </button>
                     {% endif %}
 
-                    <form method="POST" action="{{ url_for('delete_debt', debt_id=debt.id) }}" 
-                          onsubmit="return confirm('¿Eliminar esta deuda?')" class="inline">
+                    <form method="POST" action="{{ url_for('debt.delete', debt_id=debt.id) }}" 
+                          onsubmit="return confirm('¿Estás seguro de eliminar esta deuda?')">
                         <button type="submit" 
-                                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap">
-                            Eliminar
+                                class="w-full lg:w-32 bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
+                                title="Eliminar Deuda">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                            <span>Eliminar</span>
                         </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Modal: Adjuntar Evidencia de Pago -->
+            <div id="modal-payment-{{ debt.id }}" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-gray-900">Adjuntar Evidencia de Pago</h3>
+                        <button onclick="document.getElementById('modal-payment-{{ debt.id }}').classList.add('hidden')" 
+                                class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('debt.add_payment_evidence', debt_id=debt.id) }}" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Selecciona archivos</label>
+                            <input type="file" name="payment_files" multiple accept=".pdf,.png,.jpg,.jpeg" disabled
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100 cursor-not-allowed">
+                            <p class="mt-1 text-xs text-gray-500">Solo imágenes (PNG, JPG) y PDF. Máx. 5MB por archivo.</p>
+                            <p class="mt-1 text-xs text-red-600 font-medium">⚠️ Funcionalidad temporalmente deshabilitada</p>
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <button type="button" 
+                                    onclick="document.getElementById('modal-payment-{{ debt.id }}').classList.add('hidden')"
+                                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900 py-2.5 rounded-lg font-semibold">
+                                Cancelar
+                            </button>
+                            <button type="submit" 
+                                    class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2.5 rounded-lg font-semibold">
+                                Subir Archivos
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Modal: Marcar como Pagado -->
+            <div id="modal-mark-paid-{{ debt.id }}" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-gray-900">Marcar como Pagado</h3>
+                        <button onclick="document.getElementById('modal-mark-paid-{{ debt.id }}').classList.add('hidden')" 
+                                class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <p class="text-gray-700 mb-4">¿Confirmas que esta deuda ha sido pagada completamente?</p>
+                    
+                    <form method="POST" action="{{ url_for('debt.mark_paid', debt_id=debt.id) }}" enctype="multipart/form-data">
+                        <div class="mb-4 p-3 bg-gray-100 rounded-lg border border-gray-300">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">¿Desea adjuntar evidencia de pago? (Opcional - Deshabilitado)</label>
+                            <input type="file" name="payment_files" multiple accept=".pdf,.png,.jpg,.jpeg" disabled
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100 cursor-not-allowed">
+                            <p class="mt-1 text-xs text-red-600 font-medium">⚠️ Funcionalidad temporalmente deshabilitada. Máx. 5MB por archivo.</p>
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <button type="button" 
+                                    onclick="document.getElementById('modal-mark-paid-{{ debt.id }}').classList.add('hidden')"
+                                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900 py-2.5 rounded-lg font-semibold">
+                                Cancelar
+                            </button>
+                            <button type="submit" 
+                                    class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold">
+                                Marcar como Pagado
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Modal: Editar Deuda -->
+            <div id="modal-edit-{{ debt.id }}" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-gray-900">Editar Deuda</h3>
+                        <button onclick="document.getElementById('modal-edit-{{ debt.id }}').classList.add('hidden')" 
+                                class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('debt.edit', debt_id=debt.id) }}" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Monto de la Deuda</label>
+                            <input type="number" name="amount" step="0.01" value="{{ debt.amount }}" required
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" name="has_installments" 
+                                       {% if debt.has_installments %}checked{% endif %}
+                                       onchange="document.getElementById('installments-edit-{{ debt.id }}').classList.toggle('hidden')"
+                                       class="w-5 h-5 text-amber-600 rounded focus:ring-amber-500">
+                                <span class="ml-2 text-sm font-medium text-gray-700">Pago en cuotas</span>
+                            </label>
+                        </div>
+                        
+                        <div id="installments-edit-{{ debt.id }}" class="mb-4 {% if not debt.has_installments %}hidden{% endif %}">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Número de Cuotas</label>
+                            <input type="number" name="installments_total" min="2" value="{{ debt.installments_total }}"
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">
+                            <p class="mt-1 text-xs text-gray-500">Cuotas pagadas: {{ debt.installments_paid }}</p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Notas (Opcional)</label>
+                            <textarea name="notes" rows="3"
+                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent">{{ debt.notes }}</textarea>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Adjuntar Archivos Adicionales (Opcional - Deshabilitado)</label>
+                            <input type="file" name="debt_files" multiple accept=".pdf,.png,.jpg,.jpeg" disabled
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-100 cursor-not-allowed">
+                            <p class="mt-1 text-xs text-gray-500">Solo imágenes y PDF. Máx. 5MB por archivo.</p>
+                            <p class="mt-1 text-xs text-red-600 font-medium">⚠️ Funcionalidad temporalmente deshabilitada</p>
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <button type="button" 
+                                    onclick="document.getElementById('modal-edit-{{ debt.id }}').classList.add('hidden')"
+                                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900 py-2.5 rounded-lg font-semibold">
+                                Cancelar
+                            </button>
+                            <button type="submit" 
+                                    class="flex-1 bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-lg font-semibold">
+                                Guardar Cambios
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -188,7 +493,7 @@
             </button>
         </div>
 
-        <form method="POST" action="{{ url_for('edit_debtor', debtor_id=debtor.id) }}" class="space-y-4">
+        <form method="POST" action="{{ url_for('debtor.edit', debtor_id=debtor.id) }}" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Nombre *</label>
                 <input type="text" name="name" value="{{ debtor.name }}" required 
@@ -196,13 +501,17 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Teléfono <span class="text-gray-500 font-normal">(opcional)</span>
+                </label>
                 <input type="text" name="phone" value="{{ debtor.phone or '' }}" 
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Email <span class="text-gray-500 font-normal">(opcional)</span>
+                </label>
                 <input type="email" name="email" value="{{ debtor.email or '' }}" 
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
             </div>
@@ -235,14 +544,19 @@
             </button>
         </div>
 
-        <form method="POST" action="{{ url_for('add_debt') }}" class="space-y-4">
-            <input type="hidden" name="debtor_id" value="{{ debtor.id }}">
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Monto *</label>
-                <input type="number" name="amount" step="0.01" required 
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-            </div>
+            <form method="POST" action="{{ url_for('debt.add') }}" enctype="multipart/form-data" class="space-y-4">
+                <input type="hidden" name="debtor_id" value="{{ debtor.id }}">
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Monto *</label>
+                    <input type="number" id="debt-amount-input" name="amount" step="0.01" required 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    
+                    <!-- Botones de montos sugeridos -->
+                    <div class="mt-2 flex flex-wrap gap-2" id="suggested-amounts">
+                        <!-- Se llenan dinámicamente con JavaScript según la moneda -->
+                    </div>
+                </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Fecha Inicial *</label>
@@ -270,6 +584,15 @@
                 <textarea name="notes" rows="3" 
                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"></textarea>
             </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Archivos Adjuntos <span class="text-gray-500 font-normal">(opcional)</span>
+                </label>
+                <input type="file" name="debt_files" multiple accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.txt"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm">
+                <p class="mt-1 text-xs text-gray-500">Comprobantes, PDFs de la deuda, etc. (Max 16MB por archivo)</p>
+            </div>
 
             <div class="flex gap-3 pt-4">
                 <button type="button" 
@@ -289,5 +612,33 @@
 <script>
     // Establecer fecha de hoy como valor por defecto
     document.querySelector('input[name="initial_date"]').value = new Date().toISOString().split('T')[0];
+    
+    // Montos sugeridos según la moneda del usuario
+    const currency = '{{ current_user.currency }}';
+    const suggestedAmounts = {
+        'CLP': [1000, 5000, 10000, 50000, 100000, 500000],
+        'USD': [10, 50, 100, 500, 1000],
+        'BRL': [10, 50, 100, 500, 1000]
+    };
+    
+    // Obtener montos para la moneda actual
+    const amounts = suggestedAmounts[currency] || suggestedAmounts['USD'];
+    
+    // Generar botones de montos sugeridos
+    const container = document.getElementById('suggested-amounts');
+    const amountInput = document.getElementById('debt-amount-input');
+    
+    amounts.forEach(amount => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = `+${amount.toLocaleString()}`;
+        button.className = 'px-3 py-1 text-xs font-semibold bg-green-100 text-green-700 hover:bg-green-200 rounded-lg transition duration-200';
+        button.onclick = function() {
+            const currentValue = parseFloat(amountInput.value) || 0;
+            amountInput.value = currentValue + amount;
+            amountInput.focus();
+        };
+        container.appendChild(button);
+    });
 </script>
 {% endblock %}

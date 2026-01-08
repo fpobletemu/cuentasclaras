@@ -10,7 +10,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600 mb-1">Total Por Cobrar</p>
-                    <p class="text-3xl font-bold text-red-600">{{ current_user.format_currency(stats.total_owed) }}</p>
+                    <p class="text-3xl font-bold text-red-600">{{ current_user.format_currency(total_owed) }}</p>
                 </div>
                 <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
                     <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -24,7 +24,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600 mb-1">Total Cobrado</p>
-                    <p class="text-3xl font-bold text-green-600">{{ current_user.format_currency(stats.total_paid) }}</p>
+                    <p class="text-3xl font-bold text-green-600">{{ current_user.format_currency(total_paid) }}</p>
                 </div>
                 <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                     <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,7 +38,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600 mb-1">Deudores</p>
-                    <p class="text-3xl font-bold text-gray-900">{{ stats.total_debtors }}</p>
+                    <p class="text-3xl font-bold text-gray-900">{{ debtors|length }}</p>
                 </div>
                 <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                     <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,8 +51,8 @@
         <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Deudas Activas</p>
-                    <p class="text-3xl font-bold text-gray-900">{{ stats.active_debts }}</p>
+                    <p class="text-sm text-gray-600 mb-1">Deudores Activos</p>
+                    <p class="text-3xl font-bold text-gray-900">{{ active_debtors }}</p>
                 </div>
                 <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
                     <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,13 +66,64 @@
     <!-- Botón Agregar Deudor -->
     <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 class="text-2xl font-bold text-gray-900">Mis Deudores</h2>
-        <button onclick="document.getElementById('modal-add-debtor').classList.remove('hidden')" 
-                class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            Agregar Deudor
-        </button>
+        <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <a href="{{ url_for('main.export_all_pdf') }}" 
+               class="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Exportar Todo a PDF
+            </a>
+            <button onclick="document.getElementById('modal-add-debtor').classList.remove('hidden')" 
+                    class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Agregar Deudor
+            </button>
+        </div>
+    </div>
+
+    <!-- Buscador y Filtros -->
+    <div class="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+        <form method="GET" action="{{ url_for('main.dashboard') }}" class="flex flex-col sm:flex-row gap-3">
+            <!-- Buscador -->
+            <div class="flex-1">
+                <div class="relative">
+                    <input type="text" 
+                           name="search" 
+                           value="{{ search or '' }}"
+                           placeholder="Buscar deudor por nombre..." 
+                           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Ordenar por -->
+            <div class="flex gap-2">
+                <select name="sort_by" 
+                        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white">
+                    <option value="name_asc" {% if sort_by == 'name_asc' %}selected{% endif %}>A-Z</option>
+                    <option value="name_desc" {% if sort_by == 'name_desc' %}selected{% endif %}>Z-A</option>
+                    <option value="debt_desc" {% if sort_by == 'debt_desc' %}selected{% endif %}>Deuda mayor</option>
+                    <option value="debt_asc" {% if sort_by == 'debt_asc' %}selected{% endif %}>Deuda menor</option>
+                </select>
+                
+                <button type="submit" 
+                        class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition duration-200">
+                    Aplicar
+                </button>
+                
+                {% if search or sort_by != 'name_asc' %}
+                <a href="{{ url_for('main.dashboard') }}" 
+                   class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-lg font-semibold transition duration-200">
+                    Limpiar
+                </a>
+                {% endif %}
+            </div>
+        </form>
     </div>
 
     <!-- Lista de Deudores -->
@@ -105,7 +156,7 @@
                 </div>
             </div>
 
-            <a href="{{ url_for('view_debtor', debtor_id=debtor.id) }}" 
+            <a href="{{ url_for('debtor.detail', debtor_id=debtor.id) }}" 
                class="block w-full text-center bg-gray-100 hover:bg-gray-200 text-gray-900 py-2 rounded-lg font-semibold transition duration-200">
                 Ver Detalles
             </a>
@@ -113,10 +164,19 @@
         {% else %}
         <div class="col-span-full text-center py-12">
             <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {% if search %}
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                {% else %}
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                {% endif %}
             </svg>
+            {% if search %}
+            <p class="text-gray-600 text-lg">No se encontraron deudores con "{{ search }}"</p>
+            <p class="text-gray-500 text-sm mt-2">Intenta con otro término de búsqueda</p>
+            {% else %}
             <p class="text-gray-600 text-lg">No tienes deudores registrados aún</p>
             <p class="text-gray-500 text-sm mt-2">Haz clic en "Agregar Deudor" para empezar</p>
+            {% endif %}
         </div>
         {% endfor %}
     </div>
@@ -135,7 +195,7 @@
             </button>
         </div>
 
-        <form method="POST" action="{{ url_for('add_debtor') }}" class="space-y-4">
+        <form method="POST" action="{{ url_for('debtor.add') }}" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Nombre *</label>
                 <input type="text" name="name" required 
@@ -143,13 +203,17 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Teléfono <span class="text-gray-500 font-normal">(opcional)</span>
+                </label>
                 <input type="text" name="phone" 
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Email <span class="text-gray-500 font-normal">(opcional)</span>
+                </label>
                 <input type="email" name="email" 
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
             </div>

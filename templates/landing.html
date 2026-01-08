@@ -1,35 +1,12 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CuentasClaras - Gestiona tus préstamos y deudas</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gradient-to-br from-green-50 to-blue-50 min-h-screen">
-    <!-- Navbar -->
-    <nav class="bg-white shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <h1 class="text-2xl sm:text-3xl font-bold text-green-600">CuentasClaras</h1>
-                </div>
-                <div class="flex items-center gap-3 sm:gap-4">
-                    <a href="{{ url_for('login') }}" 
-                       class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base">
-                        Iniciar Sesión
-                    </a>
-                    <a href="{{ url_for('register') }}" 
-                       class="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold text-sm sm:text-base transition duration-200">
-                        Registrarse
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
+{% extends "base.html" %}
 
-    <!-- Hero Section -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+{% block title %}CuentasClaras - Gestiona tus préstamos y deudas{% endblock %}
+
+{% block body_class %}bg-gradient-to-br from-green-50 to-blue-50{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div>
                 <h2 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6">
@@ -39,7 +16,7 @@
                     La forma más simple y organizada de gestionar préstamos personales y hacer seguimiento de las deudas.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="{{ url_for('register') }}" 
+                    <a href="{{ url_for('auth.register') }}" 
                        class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg font-bold text-lg text-center transition duration-200 shadow-lg hover:shadow-xl">
                         Comenzar Gratis
                     </a>
@@ -207,20 +184,10 @@
             <p class="text-lg sm:text-xl text-green-100 mb-6 sm:mb-8">
                 Empieza gratis hoy mismo. No necesitas tarjeta de crédito.
             </p>
-            <a href="{{ url_for('register') }}" 
+            <a href="{{ url_for('auth.register') }}" 
                class="inline-block bg-white hover:bg-gray-100 text-green-600 px-8 sm:px-12 py-4 rounded-lg font-bold text-lg sm:text-xl transition duration-200 shadow-xl hover:shadow-2xl">
                 Crear Cuenta Gratis
             </a>
         </div>
     </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-8 sm:py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h4 class="text-xl sm:text-2xl font-bold text-white mb-2">CuentasClaras</h4>
-            <p class="text-sm sm:text-base">Porque las buenas relaciones empiezan con cuentas claras 🤝💰</p>
-            <p class="text-xs sm:text-sm mt-4">&copy; 2026 CuentasClaras. Todos los derechos reservados.</p>
-        </div>
-    </footer>
-</body>
-</html>
+{% endblock %}

@@ -8,6 +8,7 @@ __pycache__/
 
 # Entornos virtuales
 venv/
+.venv/
 env/
 ENV/
 interenv/
@@ -19,8 +20,9 @@ interenv/
 *.db
 *.sqlite
 *.sqlite3
+instance/
 
-# IDEs
+# IDEs y editores
 .vscode/
 .idea/
 *.swp
@@ -35,5 +37,12 @@ Thumbs.db
 *.log
 
 # Flask
-instance/
 .webassets-cache
+
+# Respaldos y temporales
+*_old.py
+*.bak
+*.tmp
+.pytest_cache/
+.coverage
+htmlcov/

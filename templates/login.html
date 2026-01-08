@@ -3,11 +3,11 @@
 {% block title %}Iniciar Sesión - CuentasClaras{% endblock %}
 
 {% block content %}
-<div class="min-h-screen flex items-center justify-center px-4 py-8 sm:py-12">
+<div class="flex items-center justify-center px-4 py-8 sm:py-12">
     <div class="max-w-md w-full space-y-6 sm:space-y-8">
         <div class="text-center">
-            <h2 class="text-3xl sm:text-4xl font-bold text-green-600 mb-2">CuentasClaras</h2>
-            <p class="text-sm sm:text-base text-gray-600">Gestiona tus préstamos y deudas de forma simple</p>
+            <h2 class="text-3xl sm:text-4xl font-bold text-green-600 mb-2">Iniciar Sesión</h2>
+            <p class="text-sm sm:text-base text-gray-600">Accede a tu cuenta de CuentasClaras</p>
         </div>
         
         <div class="bg-white p-6 sm:p-8 rounded-xl shadow-lg">
@@ -34,7 +34,7 @@
             
             <div class="mt-6 text-center">
                 <p class="text-gray-600">¿No tienes cuenta? 
-                    <a href="{{ url_for('register') }}" class="text-green-600 hover:text-green-700 font-semibold">Regístrate aquí</a>
+                    <a href="{{ url_for('auth.register') }}" class="text-green-600 hover:text-green-700 font-semibold">Regístrate aquí</a>
                 </p>
             </div>
         </div>

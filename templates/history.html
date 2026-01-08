@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}Historial de Movimientos - CuentasClaras{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Historial de Movimientos</h1>
+        <p class="text-gray-600">Registro completo de todas las acciones realizadas en tus deudas</p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <form method="GET" action="{{ url_for('main.history') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Filtro por Deudor -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Deudor</label>
+                <select name="debtor_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Todos los deudores</option>
+                    {% for debtor in debtors %}
+                    <option value="{{ debtor.id }}" {% if selected_debtor == debtor.id %}selected{% endif %}>
+                        {{ debtor.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Filtro por Tipo de Acción -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Acción</label>
+                <select name="action_type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Todas las acciones</option>
+                    {% for value, label in action_types %}
+                    <option value="{{ value }}" {% if selected_action == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Filtro por Fecha Desde -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Desde</label>
+                <input type="date" name="date_from" value="{{ date_from }}" 
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <!-- Filtro por Fecha Hasta -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Hasta</label>
+                <input type="date" name="date_to" value="{{ date_to }}" 
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <!-- Botones -->
+            <div class="md:col-span-2 lg:col-span-4 flex gap-3">
+                <button type="submit" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                    </svg>
+                    Filtrar
+                </button>
+                <a href="{{ url_for('main.history') }}" 
+                   class="bg-gray-200 hover:bg-gray-300 text-gray-900 px-6 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Limpiar Filtros
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Contador de Resultados -->
+    <div class="mb-4">
+        <p class="text-sm text-gray-600">
+            <span class="font-semibold">{{ movements|length }}</span> movimiento{% if movements|length != 1 %}s{% endif %} encontrado{% if movements|length != 1 %}s{% endif %}
+        </p>
+    </div>
+
+    <!-- Timeline de Movimientos -->
+    {% if movements %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="space-y-6">
+            {% for movement in movements %}
+            <div class="flex gap-4">
+                <!-- Icono con color según tipo -->
+                <div class="flex-shrink-0">
+                    {% if movement.action_type == 'created' %}
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                    </div>
+                    {% elif movement.action_type == 'installment_paid' %}
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                    </div>
+                    {% elif movement.action_type == 'marked_paid' %}
+                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    {% elif movement.action_type == 'edited' %}
+                    <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </div>
+                    {% elif movement.action_type == 'deleted' %}
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </div>
+                    {% else %}
+                    <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Contenido -->
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-4 mb-1">
+                        <div>
+                            <p class="text-base font-semibold text-gray-900">{{ movement.description }}</p>
+                            <p class="text-sm text-gray-600 mt-1">
+                                Deudor: <span class="font-medium">{{ movement.debt.debtor.name }}</span>
+                            </p>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <p class="text-sm font-medium text-gray-900">{{ movement.created_at.strftime('%d/%m/%Y') }}</p>
+                            <p class="text-xs text-gray-500">{{ movement.created_at.strftime('%H:%M') }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Enlace al deudor (si la deuda aún existe) -->
+                    {% if movement.action_type != 'deleted' %}
+                    <a href="{{ url_for('debtor.detail', debtor_id=movement.debt.debtor_id) }}" 
+                       class="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 hover:underline mt-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                        Ver deudor
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if not loop.last %}
+            <hr class="border-gray-200">
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <!-- Estado vacío -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+        <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <p class="text-gray-600 text-lg">No hay movimientos que coincidan con los filtros</p>
+        <p class="text-gray-500 text-sm mt-2">Intenta ajustar los criterios de búsqueda</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

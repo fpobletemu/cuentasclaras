@@ -7,24 +7,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    {% if current_user.is_authenticated %}
-    <nav class="bg-white shadow-sm border-b border-gray-200">
+<body class="{% block body_class %}bg-gray-50{% endblock %} min-h-screen">
+    <!-- Navbar unificado -->
+    <nav class="bg-white shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
+            <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <h1 class="text-xl sm:text-2xl font-bold text-green-600">CuentasClaras</h1>
+                    <a href="{% if current_user.is_authenticated %}{{ url_for('main.dashboard') }}{% else %}{{ url_for('main.index') }}{% endif %}">
+                        <h1 class="text-2xl sm:text-3xl font-bold text-green-600">CuentasClaras</h1>
+                    </a>
                 </div>
                 
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-4">
+                {% if current_user.is_authenticated %}
+                <!-- Desktop Menu - Autenticado -->
+                <div class="hidden md:flex items-center gap-3 sm:gap-4">
                     <span class="text-gray-700 text-sm">Hola, {{ current_user.username }}</span>
-                    <a href="{{ url_for('dashboard') }}" class="text-gray-600 hover:text-gray-900 text-sm">Dashboard</a>
-                    <a href="{{ url_for('profile') }}" class="text-gray-600 hover:text-gray-900 text-sm">Perfil</a>
-                    <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">Cerrar Sesión</a>
+                    <a href="{{ url_for('main.index') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base">Inicio</a>
+                    <a href="{{ url_for('main.dashboard') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base">Dashboard</a>
+                    <a href="{{ url_for('main.help') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base">Ayuda</a>
+                    <a href="{{ url_for('main.profile') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base">Perfil</a>
+                    <a href="{{ url_for('auth.logout') }}" class="bg-red-500 hover:bg-red-600 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold text-sm sm:text-base transition duration-200">Cerrar Sesión</a>
                 </div>
 
-                <!-- Mobile Menu Button -->
+                <!-- Mobile Menu Button - Autenticado -->
                 <div class="md:hidden flex items-center">
                     <button id="mobile-menu-button" class="text-gray-700 hover:text-gray-900 focus:outline-none">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,17 +37,44 @@
                         </svg>
                     </button>
                 </div>
+                {% else %}
+                <!-- Desktop Menu - No autenticado -->
+                <div class="flex items-center gap-3 sm:gap-4">
+                    {% if request.endpoint != 'main.index' %}
+                    <a href="{{ url_for('main.index') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base">
+                        Inicio
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('main.help') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base">
+                        Ayuda
+                    </a>
+                    {% if request.endpoint != 'auth.login' %}
+                    <a href="{{ url_for('auth.login') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base">
+                        Iniciar Sesión
+                    </a>
+                    {% endif %}
+                    {% if request.endpoint != 'auth.register' %}
+                    <a href="{{ url_for('auth.register') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold text-sm sm:text-base transition duration-200">
+                        Registrarse
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
             </div>
 
-            <!-- Mobile Menu -->
+            {% if current_user.is_authenticated %}
+            <!-- Mobile Menu - Autenticado -->
             <div id="mobile-menu" class="hidden md:hidden pb-4">
                 <div class="flex flex-col space-y-3">
                     <span class="text-gray-700 text-sm font-semibold">Hola, {{ current_user.username }}</span>
-                    <a href="{{ url_for('dashboard') }}" class="text-gray-600 hover:text-gray-900 text-sm py-2">Dashboard</a>
-                    <a href="{{ url_for('profile') }}" class="text-gray-600 hover:text-gray-900 text-sm py-2">Perfil</a>
-                    <a href="{{ url_for('logout') }}" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm text-center">Cerrar Sesión</a>
+                    <a href="{{ url_for('main.index') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base py-2">Inicio</a>
+                    <a href="{{ url_for('main.dashboard') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base py-2">Dashboard</a>
+                    <a href="{{ url_for('main.help') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base py-2">Ayuda</a>
+                    <a href="{{ url_for('main.profile') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base py-2">Perfil</a>
+                    <a href="{{ url_for('auth.logout') }}" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm text-center">Cerrar Sesión</a>
                 </div>
             </div>
+            {% endif %}
         </div>
     </nav>
     
@@ -51,7 +83,6 @@
             document.getElementById('mobile-menu').classList.toggle('hidden');
         });
     </script>
-    {% endif %}
 
     <main class="{% if current_user.is_authenticated %}py-8{% endif %}">
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -68,5 +99,14 @@
 
         {% block content %}{% endblock %}
     </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8 sm:py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h4 class="text-xl sm:text-2xl font-bold text-white mb-2">CuentasClaras</h4>
+            <p class="text-sm sm:text-base">Porque las buenas relaciones empiezan con cuentas claras 🤝💰</p>
+            <p class="text-xs sm:text-sm mt-4">&copy; 2026 CuentasClaras. Todos los derechos reservados.</p>
+        </div>
+    </footer>
 </body>
 </html>
