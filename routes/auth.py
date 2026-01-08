@@ -46,8 +46,10 @@ def register():
         db.session.add(user)
         db.session.commit()
         
-        flash('¡Registro exitoso! Por favor inicia sesión', 'success')
-        return redirect(url_for('auth.login'))
+        # Iniciar sesión automáticamente
+        login_user(user)
+        flash('¡Registro exitoso! Bienvenido a CuentasClaras', 'success')
+        return redirect(url_for('main.dashboard'))
     
     return render_template('register.html')
 
