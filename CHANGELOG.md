@@ -31,17 +31,62 @@ Todos los cambios importantes del proyecto CuentasClaras serán documentados en 
 - ✅ Contador automático de días transcurridos
 - ✅ Sistema opcional de cuotas con progreso visual
 - ✅ Pago de cuotas individuales
-- ✅ Marcar deudas como pagadas
+- ✅ **Auto-completado de deuda al pagar última cuota**
+- ✅ Botón "Marcar Pagado" solo para deudas sin cuotas
+- ✅ Modal de confirmación con opción de adjuntar evidencia
+- ✅ **Sistema de edición de deudas:**
+  - Editar monto, cuotas, y notas
+  - Botón de edición en header de cada deuda
+  - Adjuntar archivos adicionales de evidencia
+  - Actualizar sistema de cuotas
 - ✅ Notas adicionales por deuda
 - ✅ Cálculo de montos restantes
 - ✅ **Sistema de archivos adjuntos:**
-  - Adjuntar documentos al crear deudas (comprobantes, PDFs, etc.)
-  - Adjuntar evidencias de pago posteriormente
-  - Validación de formatos (PDF, PNG, JPG, JPEG, DOC, DOCX, TXT)
-  - Límite de 16MB por archivo
+  - Adjuntar documentos al crear deudas (comprobantes, contratos)
+  - Adjuntar evidencias de pago al marcar como pagado
+  - Botón de adjuntar evidencia (aparece después de registrar pagos)
+  - Validación de formatos: **Solo imágenes (PNG, JPG, JPEG) y PDF**
+  - Límite de **5MB por archivo** (reducido para optimización)
   - Descarga de archivos adjuntos
   - Organización automática por usuario y deuda
   - Eliminación automática al borrar deuda
+  - **Funcionalidad temporalmente deshabilitada en UI**
+- ✅ **Sistema de historial de cambios:**
+  - Registro automático de todas las acciones
+  - Timeline visual colapsable por deuda
+  - Iconos de colores según tipo de acción
+  - Tipos: creada, editada, cuota pagada, pagada, eliminada
+
+#### Historial General
+- ✅ **Página de historial completo del usuario** (`/history`)
+- ✅ Vista de todos los movimientos realizados
+- ✅ **Sistema de filtros avanzados:**
+  - Filtrar por deudor específico
+  - Filtrar por tipo de acción
+  - Filtrar por rango de fechas (desde/hasta)
+  - Combinación de múltiples filtros
+- ✅ Timeline visual con iconos de colores
+- ✅ Enlace directo a cada deudor desde historial
+- ✅ Contador de resultados dinámico
+- ✅ Enlace en navbar (desktop y móvil)
+- ✅ Estado vacío con mensaje informativo
+
+#### Interfaz de Usuario
+- ✅ **Diseño de botones optimizado:**
+  - Grid de 2 columnas en mobile para mejor legibilidad
+  - Tamaños uniformes (lg:w-32 en desktop)
+  - Padding consistente (px-4 py-2.5)
+  - Botón "Editar" reubicado al header de la deuda
+- ✅ **Códigos de color semánticos:**
+  - 🔵 Azul: Pagar Cuota (acción disponible)
+  - 🟠 Naranja: Marcar Pagado (estado pendiente)
+  - 🟢 Verde: Pagado (estado completado, deshabilitado)
+  - 🟡 Ámbar: Editar (modificar deuda)
+  - ⚫ Gris/Slate: Adjuntar (deshabilitado temporalmente)
+  - 🔴 Rojo: Eliminar (acción destructiva)
+- ✅ Responsive design mejorado para mobile y desktop
+- ✅ Estados visuales claros (pagado/pendiente)
+- ✅ Iconos SVG para mejor comprensión
 
 #### Multi-Moneda
 - ✅ Soporte para CLP, USD, BRL
@@ -94,6 +139,7 @@ Todos los cambios importantes del proyecto CuentasClaras serán documentados en 
 - `GET /` - Landing page
 - `GET /dashboard` - Dashboard con estadísticas
 - `GET/POST /profile` - Perfil y configuración
+- `GET /history` - **Historial general con filtros**
 - `GET /export_all_pdf` - Exportar reporte completo
 
 #### debtor_bp (Deudores)
@@ -105,8 +151,9 @@ Todos los cambios importantes del proyecto CuentasClaras serán documentados en 
 
 #### debt_bp (Deudas)
 - `POST /debt/add` - Crear deuda (con archivos adjuntos)
-- `POST /debt/<id>/pay_installment` - Pagar cuota
-- `POST /debt/<id>/mark_paid` - Marcar pagada
+- `POST /debt/<id>/edit` - **Editar deuda (monto, cuotas, notas)**
+- `POST /debt/<id>/pay_installment` - Pagar cuota (auto-completa si es la última)
+- `POST /debt/<id>/mark_paid` - Marcar pagada (con modal y evidencia opcional)
 - `POST /debt/<id>/delete` - Eliminar (elimina archivos físicos)
 - `POST /debt/<id>/add_payment_evidence` - Adjuntar evidencia de pago
 - `GET /debt/<id>/download/<filename>` - Descargar archivo adjunto

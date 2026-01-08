@@ -22,12 +22,19 @@ Aplicación web profesional para gestionar préstamos y deudas personales con ar
 - Registro con monto y fecha inicial
 - Contador automático de días transcurridos
 - Sistema de cuotas opcional con progreso visual
-- Marcar deudas como pagadas
+- **Auto-completado de deuda al pagar última cuota**
+- **Botón "Marcar Pagado" solo para deudas sin cuotas**
+- **Modal de confirmación con opción de adjuntar evidencia**
+- **Edición completa de deudas** (monto, cuotas, notas)
 - Pagar cuotas individuales
 - Notas adicionales por deuda
 - **Archivos adjuntos** (comprobantes, PDFs, evidencias de pago)
+  - Validación: Solo imágenes (PNG, JPG, JPEG) y PDF
+  - Límite: 5MB por archivo
+  - **Funcionalidad temporalmente deshabilitada en UI**
 - Descarga de documentos adjuntos
-- Historial completo por deudor
+- **Historial completo de cambios** por deuda con timeline visual
+- **Historial general del usuario** con filtros avanzados
 
 ### 💱 Multi-Moneda
 - Soporte para CLP (Peso Chileno), USD (Dólar), BRL (Real Brasileño)
@@ -47,7 +54,18 @@ Aplicación web profesional para gestionar préstamos y deudas personales con ar
 - Timestamps múltiples para autenticidad
 - Generación con ReportLab
 
-### 📊 Dashboard y Estadísticas
+### � Historial y Seguimiento
+- **Timeline por deuda**: Historial colapsable de todos los cambios
+- **Página de historial general**: Vista completa de todas las acciones del usuario
+- **Filtros avanzados**:
+  - Por deudor específico
+  - Por tipo de acción (creada, editada, pagada, eliminada)
+  - Por rango de fechas (desde/hasta)
+- **Registro automático** de todas las operaciones
+- **Iconos de colores** para identificar rápidamente cada tipo de acción
+- Enlaces directos al deudor desde cada entrada de historial
+
+### �📊 Dashboard y Estadísticas
 - Total por cobrar (suma de todas las deudas)
 - Total cobrado (suma de montos pagados)
 - Número de deudores registrados
@@ -61,6 +79,16 @@ Aplicación web profesional para gestionar préstamos y deudas personales con ar
 - Modales para formularios
 - Flash messages para feedback
 - Tailwind CSS para estilos modernos
+- **Botones con diseño optimizado**:
+  - Grid de 2 columnas en móvil
+  - Tamaños uniformes en desktop
+  - Códigos de color semánticos:
+    - 🔵 Azul: Pagar Cuota
+    - 🟠 Naranja: Marcar Pagado (pendiente)
+    - 🟢 Verde: Pagado (completado)
+    - 🟡 Ámbar: Editar
+    - ⚫ Gris: Adjuntar (deshabilitado)
+    - 🔴 Rojo: Eliminar
 
 ## 🏗️ Arquitectura
 
@@ -85,9 +113,9 @@ cuentasclaras/
 
 ### Blueprints (Rutas)
 - **auth_bp**: `/register`, `/login`, `/logout`
-- **main_bp**: `/`, `/dashboard`, `/profile`, `/export_all_pdf`
+- **main_bp**: `/`, `/dashboard`, `/profile`, `/history` (historial general), `/export_all_pdf`
 - **debtor_bp**: `/debtor/*` (CRUD + export PDF)
-- **debt_bp**: `/debt/*` (add, pay, mark_paid, delete)
+- **debt_bp**: `/debt/*` (add, edit, pay_installment, mark_paid, delete, download)
 
 ## 🛠️ Tecnologías
 
@@ -221,6 +249,16 @@ Ver guía detallada en [DEPLOY_RENDER.md](DEPLOY_RENDER.md)
 - `debt_attachments`: Text (JSON - archivos de deuda)
 - `payment_attachments`: Text (JSON - evidencias de pago)
 - **Métodos**: `days_elapsed()`, `installment_amount()`, `remaining_amount()`, `get_debt_attachments()`, `get_payment_attachments()`, `count_attachments()`
+- **Relación**: uno a muchos con DebtHistory
+
+### DebtHistory (Nuevo)
+- `id`: Integer (PK)
+- `debt_id`: Integer (FK)
+- `user_id`: Integer (FK)
+- `action_type`: String (created, edited, installment_paid, marked_paid, deleted)
+- `description`: Text
+- `created_at`: DateTime
+- **Propósito**: Registro automático de todas las acciones sobre deudas
 
 ## 🤝 Contribuciones
 

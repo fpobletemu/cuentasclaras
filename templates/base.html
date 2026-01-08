@@ -24,6 +24,7 @@
                     <span class="text-gray-700 text-sm">Hola, {{ current_user.username }}</span>
                     <a href="{{ url_for('main.index') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base">Inicio</a>
                     <a href="{{ url_for('main.dashboard') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base">Dashboard</a>
+                    <a href="{{ url_for('main.history') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base">Historial</a>
                     <a href="{{ url_for('main.help') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base">Ayuda</a>
                     <a href="{{ url_for('main.profile') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base">Perfil</a>
                     <a href="{{ url_for('auth.logout') }}" class="bg-red-500 hover:bg-red-600 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold text-sm sm:text-base transition duration-200">Cerrar Sesión</a>
@@ -69,6 +70,7 @@
                     <span class="text-gray-700 text-sm font-semibold">Hola, {{ current_user.username }}</span>
                     <a href="{{ url_for('main.index') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base py-2">Inicio</a>
                     <a href="{{ url_for('main.dashboard') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base py-2">Dashboard</a>
+                    <a href="{{ url_for('main.history') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base py-2">Historial</a>
                     <a href="{{ url_for('main.help') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base py-2">Ayuda</a>
                     <a href="{{ url_for('main.profile') }}" class="text-green-600 hover:text-green-700 font-semibold text-sm sm:text-base py-2">Perfil</a>
                     <a href="{{ url_for('auth.logout') }}" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm text-center">Cerrar Sesión</a>
