@@ -1,0 +1,39 @@
+# Archivos Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Entornos virtuales
+venv/
+env/
+ENV/
+interenv/
+
+# Variables de entorno
+.env
+
+# Base de datos local
+*.db
+*.sqlite
+*.sqlite3
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Flask
+instance/
+.webassets-cache
