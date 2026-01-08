@@ -38,16 +38,31 @@ def create_app(config_name='default'):
     from routes.main import main_bp
     from routes.debtor import debtor_bp
     from routes.debt import debt_bp
+    from routes.admin import admin_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(debtor_bp)
     app.register_blueprint(debt_bp)
+    app.register_blueprint(admin_bp)
     
     # Crear tablas en la base de datos si no existen
     with app.app_context():
         from extensions import db
         db.create_all()
+        
+        # Crear usuario admin por defecto si no existe
+        admin_user = User.query.filter_by(username='admin').first()
+        if not admin_user:
+            admin_user = User(
+                username='admin',
+                email='admin@cuentasclaras.com',
+                is_admin=True
+            )
+            admin_user.set_password('admin')
+            db.session.add(admin_user)
+            db.session.commit()
+            print("✅ Usuario admin creado por defecto (username: admin, password: admin)")
     
     return app
 

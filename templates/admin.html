@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de Administración - CuentasClaras{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mb-8">
+        <h1 class="text-3xl sm:text-4xl font-bold text-green-600 mb-2">Panel de Administración</h1>
+        <p class="text-gray-600">Gestión de usuarios registrados en CuentasClaras</p>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Total Usuarios</p>
+                    <p class="text-3xl font-bold text-green-600">{{ users|length }}</p>
+                </div>
+                <svg class="w-12 h-12 text-green-600 opacity-20" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Administradores</p>
+                    <p class="text-3xl font-bold text-blue-600">{{ users|selectattr('is_admin')|list|length }}</p>
+                </div>
+                <svg class="w-12 h-12 text-blue-600 opacity-20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">Usuarios Regulares</p>
+                    <p class="text-3xl font-bold text-purple-600">{{ users|rejectattr('is_admin')|list|length }}</p>
+                </div>
+                <svg class="w-12 h-12 text-purple-600 opacity-20" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de usuarios -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800">Lista de Usuarios</h2>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            ID
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Usuario
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Email
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Moneda
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Rol
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Fecha Registro
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Deudores
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for user in users %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ user.id }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <div class="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                                        <span class="text-green-600 font-semibold text-lg">
+                                            {{ user.username[0]|upper }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        {{ user.username }}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ user.email }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                {{ user.currency }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if user.is_admin %}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                Admin
+                            </span>
+                            {% else %}
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Usuario
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ user.created_at.strftime('%d/%m/%Y') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
+                                {{ user.debtors|length }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if users|length == 0 %}
+        <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            <p class="mt-2 text-sm text-gray-500">No hay usuarios registrados</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Información adicional -->
+    <div class="mt-8 bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+            </div>
+            <div class="ml-3">
+                <p class="text-sm text-blue-700">
+                    <strong>Nota:</strong> Este panel es solo visible para usuarios administradores. Los datos de contacto mostrados son solo para fines administrativos.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

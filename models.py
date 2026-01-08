@@ -24,6 +24,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(200), nullable=False)
     currency = db.Column(db.String(3), default='CLP', nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
     
     # Relaciones
     debtors = db.relationship('Debtor', backref='user', lazy=True, cascade='all, delete-orphan')
