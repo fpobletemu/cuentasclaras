@@ -46,6 +46,32 @@ def create_app(config_name='default'):
     app.register_blueprint(debt_bp)
     app.register_blueprint(admin_bp)
     
+    # Registrar filtros personalizados de Jinja2
+    @app.template_filter('format_date')
+    def format_date_filter(date_obj):
+        """Formatea fecha sin ceros a la izquierda (ej: 9/1/2026)"""
+        if date_obj:
+            return f"{date_obj.day}/{date_obj.month}/{date_obj.year}"
+        return ""
+    
+    @app.template_filter('format_datetime')
+    def format_datetime_filter(datetime_obj):
+        """Formatea fecha y hora sin ceros a la izquierda (ej: 9/1/2026 8:05)"""
+        if datetime_obj:
+            hour = datetime_obj.hour
+            minute = f"{datetime_obj.minute:02d}"  # Minutos sí llevan 0 (ej: 8:05)
+            return f"{datetime_obj.day}/{datetime_obj.month}/{datetime_obj.year} {hour}:{minute}"
+        return ""
+    
+    @app.template_filter('format_time')
+    def format_time_filter(datetime_obj):
+        """Formatea solo hora sin ceros a la izquierda (ej: 8:05)"""
+        if datetime_obj:
+            hour = datetime_obj.hour
+            minute = f"{datetime_obj.minute:02d}"
+            return f"{hour}:{minute}"
+        return ""
+    
     # Crear tablas en la base de datos si no existen
     with app.app_context():
         from extensions import db

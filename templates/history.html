@@ -137,8 +137,8 @@
                             </p>
                         </div>
                         <div class="text-right flex-shrink-0">
-                            <p class="text-sm font-medium text-gray-900">{{ movement.created_at.strftime('%d/%m/%Y') }}</p>
-                            <p class="text-xs text-gray-500">{{ movement.created_at.strftime('%H:%M') }}</p>
+                            <p class="text-sm font-medium text-gray-900">{{ movement.created_at|format_date }}</p>
+                            <p class="text-xs text-gray-500">{{ movement.created_at|format_time }}</p>
                         </div>
                     </div>
                     

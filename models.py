@@ -53,6 +53,7 @@ class User(UserMixin, db.Model):
     def format_currency(self, amount):
         """
         Formatea un monto según la moneda preferida del usuario
+        Sin decimales .00 innecesarios, solo cuando sea necesario y máximo 2
         
         Args:
             amount (float): Monto a formatear
@@ -60,15 +61,46 @@ class User(UserMixin, db.Model):
         Returns:
             str: Monto formateado con símbolo y separadores
         """
+        # Redondear a 2 decimales
+        amount = round(amount, 2)
+        
+        # Determinar si tiene decimales significativos
+        has_decimals = (amount % 1) != 0
+        
         if self.currency == 'USD':
-            # Formato USD: $1.000,00 (punto para miles, coma para decimales)
-            return f"${amount:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+            # Formato USD: $1.000 o $1.000,50 (punto para miles, coma para decimales)
+            if has_decimals:
+                formatted = f"{amount:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+                # Eliminar ceros innecesarios (ej: $1.000,50 OK, $1.000,00 -> $1.000)
+                if formatted.endswith(',00'):
+                    formatted = formatted[:-3]
+                elif formatted.endswith('0') and ',' in formatted:
+                    formatted = formatted.rstrip('0').rstrip(',')
+                return f"${formatted}"
+            else:
+                return f"${amount:,.0f}".replace(',', '.')
         elif self.currency == 'BRL':
-            # Formato BRL: R$1.000,00
-            return f"R${amount:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+            # Formato BRL: R$1.000 o R$1.000,50
+            if has_decimals:
+                formatted = f"{amount:,.2f}".replace(',', 'X').replace('.', ',').replace('X', '.')
+                if formatted.endswith(',00'):
+                    formatted = formatted[:-3]
+                elif formatted.endswith('0') and ',' in formatted:
+                    formatted = formatted.rstrip('0').rstrip(',')
+                return f"R${formatted}"
+            else:
+                return f"R${amount:,.0f}".replace(',', '.')
         else:
-            # Formato CLP por defecto: $1.000 (sin decimales)
-            return f"${amount:,.0f}".replace(',', '.')
+            # Formato CLP: $1.000 (sin decimales si es entero, con decimales si es necesario)
+            if has_decimals:
+                formatted = f"{amount:,.2f}".replace(',', '.')
+                if formatted.endswith(',00'):
+                    formatted = formatted[:-3]
+                elif formatted.endswith('0') and ',' in formatted:
+                    formatted = formatted.rstrip('0').rstrip(',')
+                return f"${formatted}"
+            else:
+                return f"${amount:,.0f}".replace(',', '.')
     
     def __repr__(self):
         return f'<User {self.username}>'
@@ -129,6 +161,7 @@ class Debt(db.Model):
     has_installments = db.Column(db.Boolean, default=False)
     installments_total = db.Column(db.Integer, default=1)
     installments_paid = db.Column(db.Integer, default=0)
+    partial_payment = db.Column(db.Float, default=0.0)  # Abono parcial en la cuota actual
     paid = db.Column(db.Boolean, default=False, index=True)
     notes = db.Column(db.Text)
     
@@ -166,7 +199,9 @@ class Debt(db.Model):
             float: Monto pendiente
         """
         if self.has_installments:
-            return self.amount - (self.installments_paid * self.installment_amount())
+            # Monto total pagado = cuotas completas + abono parcial
+            total_paid = (self.installments_paid * self.installment_amount()) + self.partial_payment
+            return self.amount - total_paid
         return self.amount if not self.paid else 0
     
     def get_debt_attachments(self):
@@ -207,6 +242,115 @@ class Debt(db.Model):
             int: Total de documentos adjuntos
         """
         return len(self.get_debt_attachments()) + len(self.get_payment_attachments())
+    
+    def _format_amount(self, amount):
+        """
+        Formatea un monto sin decimales innecesarios
+        Solo muestra decimales cuando es necesario y máximo 2
+        
+        Args:
+            amount (float): Monto a formatear
+            
+        Returns:
+            str: Monto formateado sin símbolo de moneda
+        """
+        amount = round(amount, 2)
+        
+        # Si es entero, no mostrar decimales
+        if amount % 1 == 0:
+            return f"{int(amount):,}".replace(',', '.')
+        
+        # Si tiene decimales, formatear con máximo 2 y eliminar ceros innecesarios
+        formatted = f"{amount:,.2f}".replace(',', '.')
+        # Eliminar ceros a la derecha después del punto decimal
+        if ',' in formatted or '.' in formatted[-3:]:
+            parts = formatted.split(',') if ',' in formatted else formatted.split('.')
+            if len(parts) == 2:
+                decimal_part = parts[1].rstrip('0')
+                if decimal_part:
+                    return f"{parts[0]},{decimal_part}"
+                return parts[0]
+        return formatted
+    
+    def process_payment(self, payment_amount):
+        """
+        Procesa un abono a la deuda
+        Si la deuda tiene cuotas, aplica el pago y completa cuotas automáticamente si es necesario
+        
+        Args:
+            payment_amount (float): Monto del abono
+            
+        Returns:
+            dict: Información sobre el procesamiento (cuotas completadas, remanente, etc.)
+        """
+        result = {
+            'installments_completed': 0,
+            'remaining_payment': 0,
+            'debt_completed': False,
+            'message': ''
+        }
+        
+        if not self.has_installments:
+            # Para deudas sin cuotas, se marca como pagada si el abono >= monto restante
+            remaining = self.amount
+            if payment_amount >= remaining:
+                self.paid = True
+                result['debt_completed'] = True
+                result['remaining_payment'] = payment_amount - remaining
+                if result['remaining_payment'] > 0:
+                    result['message'] = f'Deuda pagada completamente. Sobrante: {self._format_amount(result["remaining_payment"])}'
+                else:
+                    result['message'] = 'Deuda pagada completamente'
+            else:
+                result['message'] = f'Abono de {self._format_amount(payment_amount)} registrado. Aún queda {self._format_amount(remaining - payment_amount)} por pagar.'
+            return result
+        
+        # Para deudas con cuotas
+        installment_value = self.installment_amount()
+        available_payment = payment_amount
+        
+        # Primero, completar la cuota actual si hay abono parcial previo
+        if self.partial_payment > 0:
+            remaining_in_current = installment_value - self.partial_payment
+            if available_payment >= remaining_in_current:
+                # Completa la cuota actual
+                available_payment -= remaining_in_current
+                self.installments_paid += 1
+                self.partial_payment = 0
+                result['installments_completed'] += 1
+            else:
+                # Solo suma al abono parcial
+                self.partial_payment += available_payment
+                result['remaining_payment'] = self.partial_payment
+                result['message'] = f'Abono parcial agregado a cuota actual. Llevas {self._format_amount(self.partial_payment)} de {self._format_amount(installment_value)}'
+                return result
+        
+        # Completar cuotas completas con el dinero disponible
+        while available_payment >= installment_value and self.installments_paid < self.installments_total:
+            available_payment -= installment_value
+            self.installments_paid += 1
+            result['installments_completed'] += 1
+        
+        # Si sobra dinero y aún hay cuotas pendientes, guardar como abono parcial
+        if available_payment > 0 and self.installments_paid < self.installments_total:
+            self.partial_payment = available_payment
+            result['remaining_payment'] = available_payment
+        
+        # Verificar si se completó la deuda
+        if self.installments_paid >= self.installments_total:
+            self.paid = True
+            result['debt_completed'] = True
+            result['remaining_payment'] = available_payment
+        
+        # Mensaje resumen
+        if result['installments_completed'] > 0:
+            result['message'] = f"{result['installments_completed']} cuota(s) completada(s)."
+            if self.partial_payment > 0:
+                result['message'] += f" Abono parcial de {self._format_amount(self.partial_payment)} en siguiente cuota."
+            if result['debt_completed']:
+                result['message'] += " ¡Deuda pagada completamente!"
+        
+        return result
     
     def __repr__(self):
         return f'<Debt ${self.amount} - Debtor {self.debtor_id}>'

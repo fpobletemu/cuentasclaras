@@ -2,10 +2,27 @@
 
 ## 📊 Estado del Proyecto
 
-**Versión:** 1.0.0  
+**Versión:** 1.1.0 🆕  
 **Estado:** ✅ Producción  
 **Autor:** Fernando Poblete  
-**Fecha:** Enero 8, 2026
+**Fecha:** Enero 9, 2026
+
+---
+
+## 🚀 Novedades v1.1.0
+
+### ✨ Sistema de Abonos Inteligente
+- Agregar abonos parciales o completos a deudas
+- Completado automático de múltiples cuotas
+- Remanente como abono parcial de siguiente cuota
+- Modal informativo con tips contextuales
+- Visualización de abono actual en progreso
+
+### 📊 Formato de Números Mejorado
+- Sin decimales .00 innecesarios en montos
+- Decimales solo cuando sea necesario (máximo 2)
+- Fechas sin ceros a la izquierda (9/1/2026)
+- Horas sin ceros innecesarios (8:05)
 
 ---
 
@@ -20,39 +37,46 @@ Sistema profesional para registrar, dar seguimiento y exportar información de p
 
 ### 🔧 Configuración y Core
 ```
-✅ app.py              - Application factory (51 líneas)
+✅ app.py              - Application factory (105 líneas) 🆕 filtros Jinja2
 ✅ config.py           - Configuración por entorno (52 líneas)
 ✅ extensions.py       - Extensiones Flask (40 líneas)
-✅ models.py           - Modelos de datos (168 líneas)
-✅ pdf_generator.py    - Generación PDFs (450+ líneas)
+✅ models.py           - Modelos de datos (383 líneas) 🆕 process_payment
+✅ pdf_generator.py    - Generación PDFs (607 líneas) 🆕 formato mejorado
 ✅ requirements.txt    - Dependencias (9 paquetes)
+✅ migrate_partial_payment.py 🆕 - Script migración abonos
 ```
 
-### 🎨 Templates (7 archivos)
+### 🎨 Templates (10 archivos) 🆕
 ```
 ✅ base.html           - Template base con navbar
 ✅ landing.html        - Página de inicio pública
 ✅ login.html          - Formulario de inicio de sesión
 ✅ register.html       - Formulario de registro
 ✅ dashboard.html      - Dashboard con estadísticas
-✅ debtor_detail.html  - Detalle de deudor y sus deudas
+✅ debtor_detail.html  - Detalle de deudor (🆕 modal abono)
 ✅ profile.html        - Perfil y configuración de usuario
+✅ history.html        - Historial general con filtros
+✅ help.html           - Página de ayuda
+✅ admin.html          - Panel de administración
 ```
 
-### 🛣️ Routes/Blueprints (4 módulos)
+### 🛣️ Routes/Blueprints (5 módulos) 🆕
 ```
 ✅ routes/auth.py      - Autenticación (95 líneas)
 ✅ routes/main.py      - Landing, dashboard, profile (109 líneas)
 ✅ routes/debtor.py    - CRUD deudores + PDF (125 líneas)
-✅ routes/debt.py      - Operaciones deudas (172 líneas)
+✅ routes/debt.py      - Operaciones deudas (474 líneas) 🆕 add_payment
+✅ routes/admin.py     - Panel administración (46 líneas)
 ```
 
-### 📚 Documentación (5 archivos)
+### 📚 Documentación (7 archivos) 🆕
 ```
-✅ README.md           - Documentación completa
-✅ CHANGELOG.md        - Registro de cambios
+✅ README.md           - Documentación completa (actualizada v1.1.0)
+✅ CHANGELOG.md        - Registro de cambios (actualizado v1.1.0)
 ✅ CONVENTIONS.md      - Convenciones de código
 ✅ DEPLOY_RENDER.md    - Guía de deployment
+✅ PROJECT_SUMMARY.md  - Este archivo (actualizado v1.1.0)
+✅ ABONOS_FEATURE.md   - Documentación sistema de abonos 🆕
 ✅ .github/copilot-instructions.md - Instrucciones AI
 ```
 
@@ -88,17 +112,33 @@ Sistema profesional para registrar, dar seguimiento y exportar información de p
 - [x] Deudas simples
 - [x] Deudas con cuotas
 - [x] Pagar cuotas
+- [x] **🆕 Sistema de Abonos** (v1.1.0)
+  - [x] Agregar abonos parciales
+  - [x] Completado automático de múltiples cuotas
+  - [x] Visualización de abono actual
 - [x] Marcar como pagada
+- [x] Editar deuda
 - [x] Eliminar deuda
 - [x] Notas adicionales
 - [x] Contador de días
+- [x] Historial de cambios
+- [x] Archivos adjuntos
 
 ### 💱 Multi-Moneda (100%)
 - [x] CLP (Peso Chileno)
 - [x] USD (Dólar)
 - [x] BRL (Real)
-- [x] Formato automático
+- [x] **🆕 Formato inteligente** (v1.1.0)
+  - [x] Sin decimales .00 innecesarios
+  - [x] Decimales solo cuando sea necesario
 - [x] Configuración por usuario
+
+### 📊 Formato de Números (100%) 🆕 v1.1.0
+- [x] Fechas sin ceros a la izquierda
+- [x] Horas sin ceros innecesarios
+- [x] Montos sin decimales innecesarios
+- [x] Filtros Jinja2 personalizados
+- [x] Funciones de formato para PDFs
 
 ### 📄 Exportación PDF (100%)
 - [x] PDF individual por deudor

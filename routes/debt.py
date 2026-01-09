@@ -151,6 +151,61 @@ def add():
     return redirect(url_for('debtor.detail', debtor_id=debtor_id))
 
 
+@debt_bp.route('/<int:debt_id>/add_payment', methods=['POST'])
+@login_required
+def add_payment(debt_id):
+    """
+    Agregar un abono a una deuda
+    El abono se procesa automáticamente completando cuotas si es necesario
+    """
+    # Buscar deuda
+    debt = Debt.query.get_or_404(debt_id)
+    
+    # Verificar propiedad a través del deudor
+    if debt.debtor.user_id != current_user.id:
+        flash('No tienes permiso para modificar esta deuda', 'error')
+        return redirect(url_for('main.dashboard'))
+    
+    # Verificar que la deuda no esté pagada
+    if debt.paid:
+        flash('Esta deuda ya está pagada', 'error')
+        return redirect(url_for('debtor.detail', debtor_id=debt.debtor_id))
+    
+    # Obtener monto del abono
+    payment_amount = request.form.get('payment_amount', type=float)
+    
+    if not payment_amount or payment_amount <= 0:
+        flash('Debes ingresar un monto válido', 'error')
+        return redirect(url_for('debtor.detail', debtor_id=debt.debtor_id))
+    
+    # Procesar el abono usando el método del modelo
+    result = debt.process_payment(payment_amount)
+    
+    # Registrar en historial
+    if result['debt_completed']:
+        log_debt_change(
+            debt.id,
+            'marked_paid',
+            f'Deuda pagada con abono de {current_user.format_currency(payment_amount)}. {result["message"]}'
+        )
+    elif result['installments_completed'] > 0:
+        log_debt_change(
+            debt.id,
+            'installment_paid',
+            f'Abono de {current_user.format_currency(payment_amount)}. {result["message"]}'
+        )
+    else:
+        log_debt_change(
+            debt.id,
+            'payment_added',
+            f'Abono parcial de {current_user.format_currency(payment_amount)}. {result["message"]}'
+        )
+    
+    db.session.commit()
+    flash(result['message'], 'success')
+    return redirect(url_for('debtor.detail', debtor_id=debt.debtor_id))
+
+
 @debt_bp.route('/<int:debt_id>/pay_installment', methods=['POST'])
 @login_required
 def pay_installment(debt_id):

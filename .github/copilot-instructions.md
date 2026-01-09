@@ -1,7 +1,10 @@
 # CuentasClaras - Flask Debt Management App
 
+**Versión:** 1.1.0 🆕  
+**Última actualización:** Enero 9, 2026
+
 ## Project Overview
-Aplicación web profesional para gestión de préstamos y deudas personales con autenticación de usuarios, seguimiento detallado y exportación a PDF.
+Aplicación web profesional para gestión de préstamos y deudas personales con autenticación de usuarios, **sistema de abonos inteligente**, seguimiento detallado y exportación a PDF con **formato de números mejorado**.
 
 ## Tech Stack
 - Flask 3.0 con arquitectura modular (Blueprints)
@@ -48,15 +51,17 @@ cuentasclaras/
 ### Debt
 - id, debtor_id, amount, initial_date
 - has_installments, installments_total, installments_paid
+- **partial_payment (FLOAT, default=0.0)** 🆕 v1.1.0
 - paid, notes
 - debt_attachments, payment_attachments (JSON)
 - Métodos: days_elapsed(), installment_amount(), remaining_amount()
+- **Métodos nuevos v1.1.0:** process_payment(payment_amount), _format_amount(amount)
 - Métodos: get_debt_attachments(), get_payment_attachments(), count_attachments()
 - Relación: uno a muchos con DebtHistory
 
-### DebtHistory (Nuevo)
+### DebtHistory
 - id, debt_id, user_id
-- action_type (created, edited, installment_paid, marked_paid, deleted)
+- action_type (created, edited, installment_paid, **payment_added** 🆕, marked_paid, deleted)
 - description, created_at
 - Relación: muchos a uno con Debt
 - Relación: muchos a uno con User
@@ -96,7 +101,29 @@ cuentasclaras/
   - Registro automático de todas las acciones
   - Timeline visual colapsable por deuda
   - Helper: log_debt_change(debt_id, action_type, description)
-  - Tipos: created, edited, installment_paid, marked_paid, deleted
+  - Tipos: created, edited, installment_paid, **payment_added** 🆕, marked_paid, deleted
+
+### Sistema de Abonos 🆕 v1.1.0
+- ✅ **Agregar abonos a deudas con/sin cuotas**
+- ✅ **Completado automático de múltiples cuotas**
+- ✅ **Remanente como abono parcial de siguiente cuota**
+- ✅ **Visualización de abono actual en progreso**
+- ✅ **Modal con información contextual y tips**
+- ✅ **Botón "💰 Agregar Abono" (índigo) en deudas pendientes**
+- ✅ **Método process_payment() con lógica inteligente**
+- ✅ **Campo partial_payment en BD para trackear abonos**
+- ✅ **Registro automático en historial**
+
+### Formato de Números 🆕 v1.1.0
+- ✅ **Sin decimales .00 innecesarios en montos**
+- ✅ **Decimales solo cuando sea necesario (máximo 2)**
+- ✅ **Fechas sin ceros a la izquierda** (9/1/2026 en lugar de 09/01/2026)
+- ✅ **Horas sin ceros innecesarios** (8:05 en lugar de 08:05)
+- ✅ **Filtros Jinja2:** format_date, format_datetime, format_time
+- ✅ **Función _format_amount() en modelo Debt**
+- ✅ **Actualizado format_currency() en User**
+- ✅ **Actualizado format_currency_for_pdf()**
+- ✅ **Funciones format_date_pdf() y format_datetime_pdf()**
 
 ### Multi-Moneda
 - ✅ Soporte para CLP, USD, BRL
@@ -127,6 +154,7 @@ cuentasclaras/
   - Tamaños uniformes (lg:w-32 en desktop)
   - Botón "Editar" en header de deuda
 - ✅ **Códigos de color semánticos:**
+  - 🔵 Índigo: Agregar Abono 🆕
   - Azul: Pagar Cuota
   - Naranja: Marcar Pagado (pendiente)
   - Verde: Pagado (completado)
@@ -164,6 +192,7 @@ cuentasclaras/
 ### debt_bp (prefijo: /debt)
 - POST /debt/add - Crear deuda
 - **POST /debt/<id>/edit - Editar deuda (monto, cuotas, notas)**
+- **POST /debt/<id>/add_payment - Agregar abono 🆕 v1.1.0**
 - POST /debt/<id>/pay_installment - Pagar cuota (auto-completa si es última)
 - POST /debt/<id>/mark_paid - Marcar como pagada (con modal y evidencia opcional)
 - POST /debt/<id>/delete - Eliminar deuda
@@ -187,6 +216,15 @@ cuentasclaras/
 ✅ Código limpio y documentado
 ✅ Separación de responsabilidades clara
 ✅ Todas las funcionalidades operativas
+✅ Sistema de abonos inteligente implementado (v1.1.0)
+✅ Formato de números mejorado (v1.1.0)
+✅ Listo para deployment
+
+## Author
+Fernando Poblete
+
+**Versión:** 1.1.0  
+**Última actualización:** Enero 9, 2026
 ✅ Listo para deployment
 
 ## Author

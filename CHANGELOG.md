@@ -2,6 +2,74 @@
 
 Todos los cambios importantes del proyecto CuentasClaras serán documentados en este archivo.
 
+## [1.1.0] - 2026-01-09
+
+### ✨ Nuevas Funcionalidades
+
+#### Sistema de Abonos
+- ✅ **Agregar abonos a deudas con cuotas o sin cuotas**
+- ✅ Abonos parciales se acumulan en la cuota actual
+- ✅ **Completado automático de múltiples cuotas** si el abono es mayor
+- ✅ Remanente queda como abono parcial de la siguiente cuota
+- ✅ Visualización de abono parcial en barra de progreso
+- ✅ Modal informativo con tips según tipo de deuda
+- ✅ Botón "💰 Agregar Abono" (color índigo) en cada deuda pendiente
+- ✅ Mensajes descriptivos del resultado del procesamiento
+- ✅ Registro automático en historial con tipo `payment_added`
+- ✅ Método `process_payment()` con lógica inteligente en modelo Debt
+- ✅ Campo `partial_payment` en base de datos para trackear abonos
+- ✅ Ruta `POST /debt/<id>/add_payment` para procesar abonos
+
+#### Formato de Números Mejorado
+- ✅ **Sin decimales .00 innecesarios** en montos
+- ✅ **Decimales solo cuando sea necesario** (máximo 2)
+- ✅ **Fechas sin ceros a la izquierda** (ej: 9/1/2026 en lugar de 09/01/2026)
+- ✅ **Horas sin ceros innecesarios** (ej: 8:05 en lugar de 08:05)
+- ✅ Filtros Jinja2 personalizados: `format_date`, `format_datetime`, `format_time`
+- ✅ Función `_format_amount()` en modelo Debt para formateo interno
+- ✅ Actualizado `format_currency()` en modelo User
+- ✅ Actualizado `format_currency_for_pdf()` en pdf_generator
+- ✅ Funciones `format_date_pdf()` y `format_datetime_pdf()` para PDFs
+- ✅ Aplicado en todos los templates (history, debtor_detail, admin)
+- ✅ Aplicado en todos los reportes PDF
+
+### 🛠️ Cambios Técnicos
+
+#### Base de Datos
+- ✅ Nueva columna `partial_payment` (FLOAT, default=0.0) en tabla `debt`
+- ✅ Script de migración `migrate_partial_payment.py`
+
+#### Modelos
+- ✅ Método `process_payment(payment_amount)` en clase Debt
+- ✅ Método `_format_amount(amount)` en clase Debt
+- ✅ Actualizado `remaining_amount()` para incluir abonos parciales
+- ✅ Mejorado `format_currency()` en clase User
+
+#### Templates
+- ✅ Modal "Agregar Abono" en debtor_detail.html
+- ✅ Botón de abono con icono de moneda
+- ✅ Visualización de abono parcial actual
+- ✅ Todos los templates actualizados con nuevos filtros de fecha
+
+#### PDFs
+- ✅ Cálculos actualizados para incluir abonos parciales
+- ✅ Formato de fechas sin ceros a la izquierda
+- ✅ Formato de montos sin decimales innecesarios
+
+### 🎨 UI/UX
+- ✅ **Código de color:** 🔵 Índigo para botón "Agregar Abono"
+- ✅ Información contextual en modal de abono
+- ✅ Tips dinámicos según tipo de deuda
+- ✅ Visualización clara de abonos parciales
+- ✅ Fechas y horas más legibles sin ceros innecesarios
+
+### 📚 Documentación
+- ✅ Archivo `ABONOS_FEATURE.md` con documentación completa del sistema
+- ✅ Casos de uso con ejemplos detallados
+- ✅ Instrucciones de migración de base de datos
+
+---
+
 ## [1.0.0] - 2026-01-08
 
 ### ✨ Funcionalidades Implementadas

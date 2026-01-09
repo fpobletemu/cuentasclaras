@@ -123,7 +123,7 @@
                             {% endif %}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ user.created_at.strftime('%d/%m/%Y') }}
+                            {{ user.created_at|format_date }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             <span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">

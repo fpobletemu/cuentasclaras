@@ -22,6 +22,12 @@ Aplicación web profesional para gestionar préstamos y deudas personales con ar
 - Registro con monto y fecha inicial
 - Contador automático de días transcurridos
 - Sistema de cuotas opcional con progreso visual
+- **🆕 Sistema de Abonos Inteligente** (v1.1.0)
+  - Agregar abonos parciales o completos
+  - Completado automático de múltiples cuotas
+  - Remanente como abono parcial de siguiente cuota
+  - Visualización de abono actual en progreso
+  - Modal informativo con tips contextuales
 - **Auto-completado de deuda al pagar última cuota**
 - **Botón "Marcar Pagado" solo para deudas sin cuotas**
 - **Modal de confirmación con opción de adjuntar evidencia**
@@ -38,11 +44,19 @@ Aplicación web profesional para gestionar préstamos y deudas personales con ar
 
 ### 💱 Multi-Moneda
 - Soporte para CLP (Peso Chileno), USD (Dólar), BRL (Real Brasileño)
-- Formato automático con separadores correctos
+- **Formato inteligente sin ceros innecesarios** (v1.1.0)
+  - Sin decimales .00 cuando no son necesarios
+  - Máximo 2 decimales cuando existen
 - Configuración personalizable por usuario:
-  - CLP: $1.000
-  - USD: $1.000,00
-  - BRL: R$1.000,00
+  - CLP: $1.000 o $1.234,50
+  - USD: $1.000 o $1.234,50
+  - BRL: R$1.000 o R$1.234,50
+
+### 📝 Formato de Números (v1.1.0)
+- **Fechas sin ceros a la izquierda:** 9/1/2026 (no 09/01/2026)
+- **Horas sin ceros innecesarios:** 8:05 (no 08:05)
+- **Montos sin decimales .00 innecesarios:** $1.000 (no $1.000,00)
+- **Decimales solo cuando sea necesario:** $1.234,5 (máximo 2)
 
 ### 📄 Exportación PDF
 - Exportar deudas de un deudor específico
@@ -115,7 +129,16 @@ cuentasclaras/
 - **auth_bp**: `/register`, `/login`, `/logout`
 - **main_bp**: `/`, `/dashboard`, `/profile`, `/history` (historial general), `/export_all_pdf`
 - **debtor_bp**: `/debtor/*` (CRUD + export PDF)
-- **debt_bp**: `/debt/*` (add, edit, pay_installment, mark_paid, delete, download)
+- **debt_bp**: `/debt/*` (add, edit, **add_payment** (v1.1.0), pay_installment, mark_paid, delete, download)
+
+### Modelos de Datos (v1.1.0)
+- **User**: Usuarios con autenticación y configuración de moneda
+  - Métodos: `format_currency()` (mejorado sin decimales innecesarios)
+- **Debtor**: Deudores con información de contacto
+- **Debt**: Deudas con sistema de cuotas y **abonos parciales**
+  - Campo nuevo: `partial_payment` (Float, default=0.0)
+  - Métodos: `process_payment()`, `_format_amount()`, `remaining_amount()` (actualizado)
+- **DebtHistory**: Historial de cambios con timeline
 
 ## 🛠️ Tecnologías
 
@@ -209,11 +232,30 @@ Ver guía detallada en [DEPLOY_RENDER.md](DEPLOY_RENDER.md)
    - Cuotas (opcional)
    - Notas
 6. **Gestionar Pagos**: 
+   - **🆕 Agregar abono** (parcial o completo) - v1.1.0
    - Pagar cuota individual
    - Marcar como pagada completamente
-7. **Exportar**: 
+7. **Ver Historial**: Revisar timeline de cambios por deuda o historial general
+8. **Exportar**: 
    - Botón "Exportar PDF" en detalle de deudor
    - Botón "Exportar Todo a PDF" en dashboard
+
+## 📊 Casos de Uso - Sistema de Abonos (v1.1.0)
+
+### Ejemplo 1: Abono Parcial
+**Deuda:** $12.000 en 3 cuotas de $4.000 cada una
+**Abono:** $2.000
+**Resultado:** Abono parcial de $2.000 en cuota actual (falta $2.000 para completarla)
+
+### Ejemplo 2: Completar Múltiples Cuotas
+**Deuda:** $12.000 en 3 cuotas, ninguna pagada
+**Abono:** $10.000
+**Resultado:** 2 cuotas completas + $2.000 de abono parcial en cuota 3
+
+### Ejemplo 3: Pago Total
+**Deuda:** $12.000 sin cuotas
+**Abono:** $12.000 o más
+**Resultado:** Deuda marcada como pagada automáticamente
 
 ## 📝 Modelos de Datos
 
@@ -244,21 +286,37 @@ Ver guía detallada en [DEPLOY_RENDER.md](DEPLOY_RENDER.md)
 - `has_installments`: Boolean
 - `installments_total`: Integer
 - `installments_paid`: Integer
+- `partial_payment`: Float **🆕 v1.1.0** (abono parcial en cuota actual)
 - `paid`: Boolean
 - `notes`: Text
 - `debt_attachments`: Text (JSON - archivos de deuda)
 - `payment_attachments`: Text (JSON - evidencias de pago)
-- **Métodos**: `days_elapsed()`, `installment_amount()`, `remaining_amount()`, `get_debt_attachments()`, `get_payment_attachments()`, `count_attachments()`
+- **Métodos**: 
+  - `days_elapsed()`: Días desde fecha inicial
+  - `installment_amount()`: Valor de cada cuota
+  - `remaining_amount()`: Monto pendiente (incluye abonos parciales)
+  - `process_payment(payment_amount)` **🆕 v1.1.0**: Procesa abonos con lógica inteligente
+  - `_format_amount(amount)` **🆕 v1.1.0**: Formatea montos sin decimales innecesarios
+  - `get_debt_attachments()`, `get_payment_attachments()`, `count_attachments()`
 - **Relación**: uno a muchos con DebtHistory
 
-### DebtHistory (Nuevo)
+### DebtHistory
 - `id`: Integer (PK)
 - `debt_id`: Integer (FK)
 - `user_id`: Integer (FK)
-- `action_type`: String (created, edited, installment_paid, marked_paid, deleted)
+- `action_type`: String (created, edited, installment_paid, **payment_added** 🆕, marked_paid, deleted)
 - `description`: Text
 - `created_at`: DateTime
 - **Propósito**: Registro automático de todas las acciones sobre deudas
+
+## 📦 Archivos de Migración
+
+### migrate_partial_payment.py 🆕 v1.1.0
+Script para agregar columna `partial_payment` a la tabla `debt`
+
+```bash
+python migrate_partial_payment.py
+```
 
 ## 🤝 Contribuciones
 
@@ -275,8 +333,12 @@ Este proyecto es privado y de uso personal.
 
 ---
 
-**Versión:** 1.0.0  
-**Última actualización:** Enero 2026
+**Versión:** 1.1.0 🆕  
+**Última actualización:** Enero 9, 2026  
+**Novedades v1.1.0:** 
+- Sistema de Abonos Inteligente
+- Formato de números mejorado (sin ceros innecesarios)
+- Fechas y horas más legibles
 - Usa el botón "Marcar Pagado" cuando se complete el pago
 - Contador de días muestra el tiempo transcurrido
 

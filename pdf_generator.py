@@ -15,6 +15,39 @@ from io import BytesIO
 from datetime import datetime
 
 
+def format_date_pdf(date_obj):
+    """
+    Formatea fecha para PDF sin ceros a la izquierda
+    
+    Args:
+        date_obj: Objeto date o datetime
+        
+    Returns:
+        str: Fecha formateada (ej: 9/1/2026)
+    """
+    if date_obj:
+        return f"{date_obj.day}/{date_obj.month}/{date_obj.year}"
+    return ""
+
+
+def format_datetime_pdf(datetime_obj):
+    """
+    Formatea fecha y hora para PDF sin ceros a la izquierda
+    
+    Args:
+        datetime_obj: Objeto datetime
+        
+    Returns:
+        str: Fecha y hora formateada (ej: 9/1/2026 8:05:30)
+    """
+    if datetime_obj:
+        hour = datetime_obj.hour
+        minute = f"{datetime_obj.minute:02d}"
+        second = f"{datetime_obj.second:02d}"
+        return f"{datetime_obj.day}/{datetime_obj.month}/{datetime_obj.year} {hour}:{minute}:{second}"
+    return ""
+
+
 class NumberedCanvas(canvas.Canvas):
     """
     Canvas personalizado que agrega número de página, fecha/hora y marca de agua
@@ -23,7 +56,7 @@ class NumberedCanvas(canvas.Canvas):
     def __init__(self, *args, **kwargs):
         canvas.Canvas.__init__(self, *args, **kwargs)
         self.pages = []
-        self.export_timestamp = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+        self.export_timestamp = format_datetime_pdf(datetime.now())
     
     def showPage(self):
         self.pages.append(dict(self.__dict__))
@@ -124,7 +157,8 @@ def generate_debtor_pdf(debtor, debts, current_user):
     styles = getSampleStyleSheet()
     
     # Obtener timestamp de exportación
-    export_datetime = datetime.now().strftime('%d/%m/%Y a las %H:%M:%S')
+    now = datetime.now()
+    export_datetime = f"{now.day}/{now.month}/{now.year} a las {now.hour}:{now.minute:02d}:{now.second:02d}"
     
     # Estilos personalizados
     title_style = ParagraphStyle(
@@ -167,7 +201,7 @@ def generate_debtor_pdf(debtor, debts, current_user):
         ['Deudor:', debtor.name],
         ['Teléfono:', debtor.phone or 'No especificado'],
         ['Email:', debtor.email or 'No especificado'],
-        ['Fecha:', datetime.now().strftime('%d/%m/%Y')]
+        ['Fecha:', format_date_pdf(datetime.now())]
     ]
     
     debtor_table = Table(debtor_info, colWidths=[2*inch, 4*inch])
@@ -216,7 +250,7 @@ def generate_debtor_pdf(debtor, debts, current_user):
         if debt.paid:
             paid_amount = debt.amount
         elif debt.has_installments:
-            paid_amount = (debt.amount / debt.installments_total) * debt.installments_paid
+            paid_amount = (debt.amount / debt.installments_total) * debt.installments_paid + debt.partial_payment
         else:
             paid_amount = 0
         
@@ -226,7 +260,7 @@ def generate_debtor_pdf(debtor, debts, current_user):
         # Agregar fila
         debts_data.append([
             format_currency_for_pdf(debt.amount, current_user.currency),
-            debt.initial_date.strftime('%d/%m/%Y'),
+            format_date_pdf(debt.initial_date),
             str(days),
             installment_text,
             attachments_text,
@@ -337,7 +371,8 @@ def generate_all_debtors_pdf(debtors, current_user):
     styles = getSampleStyleSheet()
     
     # Obtener timestamp de exportación
-    export_datetime = datetime.now().strftime('%d/%m/%Y a las %H:%M:%S')
+    now = datetime.now()
+    export_datetime = f"{now.day}/{now.month}/{now.year} a las {now.hour}:{now.minute:02d}:{now.second:02d}"
     
     # Estilos personalizados
     title_style = ParagraphStyle(
@@ -474,7 +509,7 @@ def generate_all_debtors_pdf(debtors, current_user):
                 if debt.paid:
                     paid_amount = debt.amount
                 elif debt.has_installments:
-                    paid_amount = (debt.amount / debt.installments_total) * debt.installments_paid
+                    paid_amount = (debt.amount / debt.installments_total) * debt.installments_paid + debt.partial_payment
                 else:
                     paid_amount = 0
                 
@@ -483,7 +518,7 @@ def generate_all_debtors_pdf(debtors, current_user):
                 
                 debtor_debts_data.append([
                     format_currency_for_pdf(debt.amount, current_user.currency),
-                    debt.initial_date.strftime('%d/%m/%Y'),
+                    format_date_pdf(debt.initial_date),
                     str(days),
                     installment_text,
                     attachments_text,

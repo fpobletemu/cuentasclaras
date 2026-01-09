@@ -23,7 +23,7 @@
                     {% if debtor.email %}
                     <p class="text-gray-600">✉️ {{ debtor.email }}</p>
                     {% endif %}
-                    <p class="text-sm text-gray-500 mt-2">Registrado: {{ debtor.created_at.strftime('%d/%m/%Y') }}</p>
+                    <p class="text-sm text-gray-500 mt-2">Registrado: {{ debtor.created_at|format_date }}</p>
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
@@ -113,7 +113,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
                         <div>
                             <p class="text-gray-600">Fecha Inicial</p>
-                            <p class="font-semibold text-gray-900">{{ debt.initial_date.strftime('%d/%m/%Y') }}</p>
+                            <p class="font-semibold text-gray-900">{{ debt.initial_date|format_date }}</p>
                         </div>
 
                         <div>
@@ -144,6 +144,11 @@
                             Progreso: {{ (debt.installments_paid / debt.installments_total * 100)|int }}%
                             | Restante: {{ current_user.format_currency(debt.remaining_amount()) }}
                         </p>
+                        {% if debt.partial_payment > 0 %}
+                        <p class="text-xs text-indigo-600 font-medium mt-1">
+                            💰 Abono parcial en cuota actual: {{ current_user.format_currency(debt.partial_payment) }} de {{ current_user.format_currency(debt.installment_amount()) }}
+                        </p>
+                        {% endif %}
                     </div>
                     {% endif %}
 
@@ -263,7 +268,7 @@
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm font-medium text-gray-900">{{ record.description }}</p>
-                                        <p class="text-xs text-gray-500 mt-0.5">{{ record.created_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                                        <p class="text-xs text-gray-500 mt-0.5">{{ record.created_at|format_datetime }}</p>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -276,6 +281,17 @@
                 <!-- Botones de Acción -->
                 <div class="w-full lg:w-auto grid grid-cols-2 lg:flex lg:flex-col gap-2">
                     {% if not debt.paid %}
+                        <!-- Botón Agregar Abono -->
+                        <button type="button" 
+                                onclick="document.getElementById('modal-add-payment-{{ debt.id }}').classList.remove('hidden')"
+                                class="w-full lg:w-32 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
+                                title="Agregar Abono">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Agregar Abono</span>
+                        </button>
+                    
                         {% if debt.has_installments and debt.installments_paid < debt.installments_total %}
                         <form method="POST" action="{{ url_for('debt.pay_installment', debt_id=debt.id) }}">
                             <button type="submit" 
@@ -396,6 +412,79 @@
                             <button type="submit" 
                                     class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold">
                                 Marcar como Pagado
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Modal: Agregar Abono -->
+            <div id="modal-add-payment-{{ debt.id }}" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-gray-900">Agregar Abono</h3>
+                        <button onclick="document.getElementById('modal-add-payment-{{ debt.id }}').classList.add('hidden')" 
+                                class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Información de la deuda -->
+                    <div class="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <div class="text-sm text-blue-900">
+                            <p class="font-semibold mb-1">Información de la Deuda</p>
+                            <div class="space-y-1 text-xs">
+                                <p><strong>Monto Total:</strong> {{ current_user.format_currency(debt.amount) }}</p>
+                                <p><strong>Restante:</strong> {{ current_user.format_currency(debt.remaining_amount()) }}</p>
+                                {% if debt.has_installments %}
+                                <p><strong>Cuotas:</strong> {{ debt.installments_paid }} / {{ debt.installments_total }}</p>
+                                <p><strong>Valor por Cuota:</strong> {{ current_user.format_currency(debt.installment_amount()) }}</p>
+                                {% if debt.partial_payment > 0 %}
+                                <p class="text-indigo-700"><strong>Abono Parcial en Cuota Actual:</strong> {{ current_user.format_currency(debt.partial_payment) }}</p>
+                                {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('debt.add_payment', debt_id=debt.id) }}">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Monto del Abono *</label>
+                            <input type="number" name="payment_amount" step="0.01" min="0.01" required
+                                   placeholder="Ingresa el monto a abonar"
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <p class="mt-2 text-xs text-gray-600">
+                                💡 <strong>Tip:</strong> Si el abono es mayor a una cuota, se completarán cuotas automáticamente.
+                            </p>
+                        </div>
+                        
+                        <div class="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                            <p class="text-xs text-yellow-800">
+                                <strong>¿Cómo funciona?</strong>
+                            </p>
+                            <ul class="text-xs text-yellow-700 mt-1 space-y-1 list-disc list-inside">
+                                {% if debt.has_installments %}
+                                <li>El abono se aplica a la cuota actual</li>
+                                <li>Si sobra dinero, completa más cuotas automáticamente</li>
+                                <li>El remanente queda como abono parcial de la siguiente cuota</li>
+                                {% else %}
+                                <li>El abono se descuenta del total</li>
+                                <li>Si cubre el total, la deuda se marca como pagada</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <button type="button" 
+                                    onclick="document.getElementById('modal-add-payment-{{ debt.id }}').classList.add('hidden')"
+                                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900 py-2.5 rounded-lg font-semibold">
+                                Cancelar
+                            </button>
+                            <button type="submit" 
+                                    class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-lg font-semibold">
+                                Agregar Abono
                             </button>
                         </div>
                     </form>
