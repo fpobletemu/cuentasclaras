@@ -3,434 +3,667 @@
 {% block title %}Ayuda - CuentasClaras{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Header -->
-    <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">📚 Centro de Ayuda</h1>
-        <p class="text-lg text-gray-600">Guía completa para usar CuentasClaras</p>
-    </div>
+<div class="flex h-screen overflow-hidden bg-gray-50">
+    <!-- Sidebar Navigation (Desktop) -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 -translate-x-full">
+        <div class="h-full overflow-y-auto">
+            <!-- Header del Sidebar -->
+            <div class="sticky top-0 bg-gradient-to-r from-green-600 to-blue-600 p-6 z-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-white mb-1">📚 Ayuda</h2>
+                        <p class="text-sm text-green-100">Guía completa</p>
+                    </div>
+                    <button onclick="toggleSidebar()" class="lg:hidden text-white hover:text-green-100">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
 
-    <!-- Tabla de Contenidos -->
-    <div class="bg-green-50 rounded-xl p-6 mb-8">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">📋 Contenidos</h2>
-        <ul class="space-y-2">
-            <li><a href="#introduccion" class="text-green-600 hover:text-green-700 font-semibold">→ Introducción</a></li>
-            <li><a href="#crear-deudor" class="text-green-600 hover:text-green-700 font-semibold">→ Crear un Deudor</a></li>
-            <li><a href="#agregar-deuda" class="text-green-600 hover:text-green-700 font-semibold">→ Agregar Deudas</a></li>
-            <li><a href="#evidencias" class="text-green-600 hover:text-green-700 font-semibold">→ Evidencias de Pago</a></li>
-            <li><a href="#cuotas" class="text-green-600 hover:text-green-700 font-semibold">→ Sistema de Cuotas</a></li>
-            <li><a href="#kpis" class="text-green-600 hover:text-green-700 font-semibold">→ Entender los KPIs</a></li>
-            <li><a href="#buscador" class="text-green-600 hover:text-green-700 font-semibold">→ Usar el Buscador y Filtros</a></li>
-            <li><a href="#exportar" class="text-green-600 hover:text-green-700 font-semibold">→ Exportar a PDF</a></li>
-            <li><a href="#perfil" class="text-green-600 hover:text-green-700 font-semibold">→ Configurar tu Perfil</a></li>
-        </ul>
-    </div>
+            <!-- Navigation Menu -->
+            <nav class="p-4 space-y-1">
+                <a href="#introduccion" onclick="navigateTo('introduccion')" class="nav-link group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-green-50 transition-colors">
+                    <span class="text-2xl">🚀</span>
+                    <span class="font-medium text-gray-700 group-hover:text-green-600">Introducción</span>
+                </a>
+                
+                <a href="#crear-deudor" onclick="navigateTo('crear-deudor')" class="nav-link group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-green-50 transition-colors">
+                    <span class="text-2xl">👤</span>
+                    <span class="font-medium text-gray-700 group-hover:text-green-600">Crear Deudor</span>
+                </a>
+                
+                <a href="#agregar-deuda" onclick="navigateTo('agregar-deuda')" class="nav-link group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-green-50 transition-colors">
+                    <span class="text-2xl">💰</span>
+                    <span class="font-medium text-gray-700 group-hover:text-green-600">Agregar Deudas</span>
+                </a>
+                
+                <a href="#abonos" onclick="navigateTo('abonos')" class="nav-link group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-green-50 transition-colors">
+                    <span class="text-2xl">💵</span>
+                    <span class="font-medium text-gray-700 group-hover:text-green-600">Sistema de Abonos</span>
+                </a>
+                
+                <a href="#evidencias" onclick="navigateTo('evidencias')" class="nav-link group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-green-50 transition-colors">
+                    <span class="text-2xl">📄</span>
+                    <span class="font-medium text-gray-700 group-hover:text-green-600">Evidencias de Pago</span>
+                </a>
+                
+                <a href="#cuotas" onclick="navigateTo('cuotas')" class="nav-link group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-green-50 transition-colors">
+                    <span class="text-2xl">📊</span>
+                    <span class="font-medium text-gray-700 group-hover:text-green-600">Sistema de Cuotas</span>
+                </a>
+                
+                <a href="#historial" onclick="navigateTo('historial')" class="nav-link group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-green-50 transition-colors">
+                    <span class="text-2xl">📋</span>
+                    <span class="font-medium text-gray-700 group-hover:text-green-600">Historial</span>
+                </a>
+                
+                <a href="#kpis" onclick="navigateTo('kpis')" class="nav-link group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-green-50 transition-colors">
+                    <span class="text-2xl">📈</span>
+                    <span class="font-medium text-gray-700 group-hover:text-green-600">Entender KPIs</span>
+                </a>
+                
+                <a href="#buscador" onclick="navigateTo('buscador')" class="nav-link group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-green-50 transition-colors">
+                    <span class="text-2xl">🔍</span>
+                    <span class="font-medium text-gray-700 group-hover:text-green-600">Buscador y Filtros</span>
+                </a>
+                
+                <a href="#exportar" onclick="navigateTo('exportar')" class="nav-link group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-green-50 transition-colors">
+                    <span class="text-2xl">📄</span>
+                    <span class="font-medium text-gray-700 group-hover:text-green-600">Exportar PDF</span>
+                </a>
+                
+                <a href="#perfil" onclick="navigateTo('perfil')" class="nav-link group flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-green-50 transition-colors">
+                    <span class="text-2xl">⚙️</span>
+                    <span class="font-medium text-gray-700 group-hover:text-green-600">Configurar Perfil</span>
+                </a>
+            </nav>
 
-    <!-- Sección: Introducción -->
-    <section id="introduccion" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span class="text-3xl">🚀</span> Introducción
-        </h2>
-        <div class="prose prose-green max-w-none">
-            <p class="text-gray-700 mb-4">
-                <strong>CuentasClaras</strong> es una aplicación web diseñada para ayudarte a gestionar préstamos personales y hacer seguimiento de las deudas de manera simple y organizada.
-            </p>
-            <p class="text-gray-700 mb-4">
-                Con CuentasClaras puedes:
-            </p>
-            <ul class="list-disc list-inside space-y-2 text-gray-700 mb-4">
-                <li>Registrar personas que te deben dinero (deudores)</li>
-                <li>Crear múltiples deudas por cada deudor</li>
-                <li>Hacer seguimiento de pagos con o sin cuotas</li>
-                <li>Visualizar estadísticas en tiempo real</li>
-                <li>Exportar reportes profesionales en PDF</li>
-                <li>Usar monedas múltiples (CLP, USD, BRL)</li>
-            </ul>
+            <!-- Footer del Sidebar -->
+            <div class="p-4 mt-auto border-t border-gray-200">
+                <div class="flex gap-2">
+                    <a href="{{ url_for('main.dashboard') }}" 
+                       class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Dashboard
+                    </a>
+                    <a href="{{ url_for('main.index') }}" 
+                       class="flex-1 text-center bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Inicio
+                    </a>
+                </div>
+            </div>
         </div>
-    </section>
+    </aside>
 
-    <!-- Sección: Crear Deudor -->
-    <section id="crear-deudor" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span class="text-3xl">👤</span> Crear un Deudor
-        </h2>
-        <div class="space-y-4">
-            <p class="text-gray-700">
-                Un <strong>deudor</strong> es una persona que te debe dinero. Cada deudor puede tener múltiples deudas asociadas.
-            </p>
-            
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                <h3 class="font-bold text-blue-900 mb-2">📝 Pasos para crear un deudor:</h3>
-                <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                    <li>Ve al <strong>Dashboard</strong> desde el menú superior</li>
-                    <li>Haz clic en el botón verde <strong>"Agregar Deudor"</strong></li>
-                    <li>Completa el formulario:
-                        <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
-                            <li><strong>Nombre</strong>: Campo obligatorio (*)</li>
-                            <li><strong>Teléfono</strong>: Opcional - útil para contactar</li>
-                            <li><strong>Email</strong>: Opcional - para enviar recordatorios</li>
+    <!-- Overlay para cerrar sidebar en móvil -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto">
+        <!-- Header con botón de menú móvil -->
+        <div class="sticky top-0 bg-white border-b border-gray-200 z-30 lg:hidden">
+            <div class="flex items-center justify-between p-4">
+                <h1 class="text-xl font-bold text-gray-900">📚 Centro de Ayuda</h1>
+                <button onclick="toggleSidebar()" class="text-gray-600 hover:text-gray-900">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="max-w-4xl mx-auto p-6 lg:p-8">
+            <!-- Introducción -->
+            <section id="introduccion" class="content-section mb-12">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                    <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                        <span class="text-4xl">🚀</span> Introducción
+                    </h1>
+                    <div class="prose prose-green max-w-none">
+                        <p class="text-gray-700 text-lg mb-4">
+                            <strong>CuentasClaras</strong> es una aplicación web diseñada para ayudarte a gestionar tus préstamos personales y hacer seguimiento de deudas de manera simple y organizada.
+                        </p>
+                        <p class="text-gray-700 mb-4">Con CuentasClaras puedes:</p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6">
+                            <li>Registrar personas que te deben dinero</li>
+                            <li>Crear y gestionar múltiples deudas por persona</li>
+                            <li>Procesar abonos parciales o completos de forma automática</li>
+                            <li>Hacer seguimiento de pagos con o sin sistema de cuotas</li>
+                            <li>Visualizar estadísticas y KPIs en tiempo real</li>
+                            <li>Revisar el historial completo de todas las operaciones</li>
+                            <li>Exportar reportes profesionales en formato PDF</li>
+                            <li>Trabajar con múltiples monedas (CLP, USD, BRL)</li>
                         </ul>
-                    </li>
-                    <li>Haz clic en <strong>"Agregar"</strong></li>
-                </ol>
-            </div>
+                        <div class="bg-gradient-to-r from-green-500 to-blue-500 rounded-lg p-6 text-white">
+                            <p class="text-lg font-semibold">🎯 Versión Actual: 1.1.0</p>
+                            <p class="text-sm mt-2 text-green-100">Incluye sistema de abonos inteligente y formato mejorado</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
-                <p class="text-green-900">
-                    <strong>💡 Consejo:</strong> Solo el nombre es obligatorio. Puedes agregar el teléfono y email después editando el deudor.
-                </p>
-            </div>
-        </div>
-    </section>
+            <!-- Crear Deudor -->
+            <section id="crear-deudor" class="content-section mb-12">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                        <span class="text-4xl">👤</span> Crear un Deudor
+                    </h2>
+                    <p class="text-gray-700 text-lg mb-6">
+                        Un <strong>deudor</strong> es una persona registrada en el sistema que te debe dinero. Cada deudor puede tener múltiples deudas asociadas a su nombre.
+                    </p>
+                    
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-blue-900 text-xl mb-4">📝 Pasos para crear un deudor:</h3>
+                        <ol class="list-decimal list-inside space-y-3 text-gray-700 text-lg">
+                            <li>Ve al <strong>Dashboard</strong> desde el menú superior</li>
+                            <li>Haz clic en el botón verde <strong>"Agregar Deudor"</strong></li>
+                            <li>Completa el formulario:
+                                <ul class="list-disc list-inside ml-6 mt-2 space-y-2">
+                                    <li><strong>Nombre</strong>: Campo obligatorio (*)</li>
+                                    <li><strong>Teléfono</strong>: Opcional - útil para contactar</li>
+                                    <li><strong>Email</strong>: Opcional - para enviar recordatorios</li>
+                                </ul>
+                            </li>
+                            <li>Haz clic en <strong>"Agregar"</strong></li>
+                        </ol>
+                    </div>
 
-    <!-- Sección: Agregar Deuda -->
-    <section id="agregar-deuda" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span class="text-3xl">💰</span> Agregar Deudas
-        </h2>
-        <div class="space-y-4">
-            <p class="text-gray-700">
-                Una vez que tienes un deudor registrado, puedes agregarle una o más deudas.
-            </p>
-            
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                <h3 class="font-bold text-blue-900 mb-2">📝 Pasos para agregar una deuda:</h3>
-                <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                    <li>Haz clic en <strong>"Ver Detalles"</strong> de un deudor</li>
-                    <li>Presiona el botón verde <strong>"Agregar Deuda"</strong></li>
-                    <li>Completa el formulario:
-                        <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
-                            <li><strong>Monto</strong>: Cantidad prestada (obligatorio)</li>
-                            <li><strong>Fecha Inicial</strong>: Cuándo se realizó el préstamo</li>
-                            <li><strong>¿Pago en cuotas?</strong>: Marca si será pagado en cuotas</li>
-                            <li><strong>Número de Cuotas</strong>: Solo si seleccionaste cuotas</li>
-                            <li><strong>Notas</strong>: Observaciones adicionales (opcional)</li>
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+                        <p class="text-green-900 text-lg">
+                            <strong>💡 Consejo:</strong> Solo el nombre es obligatorio. El teléfono y el email se pueden agregar después editando el deudor.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Agregar Deuda -->
+            <section id="agregar-deuda" class="content-section mb-12">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                        <span class="text-4xl">💰</span> Agregar Deudas
+                    </h2>
+                    <p class="text-gray-700 text-lg mb-6">
+                        Una vez que tienes un deudor registrado, puedes agregarle una o más deudas.
+                    </p>
+                    
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-blue-900 text-xl mb-4">📝 Pasos para agregar una deuda:</h3>
+                        <ol class="list-decimal list-inside space-y-3 text-gray-700 text-lg">
+                            <li>Haz clic en <strong>"Ver Detalles"</strong> de un deudor</li>
+                            <li>Presiona el botón verde <strong>"Agregar Deuda"</strong></li>
+                            <li>Completa el formulario:
+                                <ul class="list-disc list-inside ml-6 mt-2 space-y-2">
+                                    <li><strong>Monto</strong>: Cantidad prestada (obligatorio)</li>
+                                    <li><strong>Fecha Inicial</strong>: Cuándo se realizó el préstamo</li>
+                                    <li><strong>¿Pago en cuotas?</strong>: Marca si será pagado en cuotas</li>
+                                    <li><strong>Número de Cuotas</strong>: Solo si seleccionaste cuotas</li>
+                                    <li><strong>Notas</strong>: Observaciones adicionales (opcional)</li>
+                                </ul>
+                            </li>
+                            <li>Usa los <strong>botones de montos sugeridos</strong> para agregar rápido</li>
+                            <li>Haz clic en <strong>"Agregar"</strong></li>
+                        </ol>
+                    </div>
+
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg">
+                        <p class="text-yellow-900 text-lg">
+                            <strong>⚠️ Importante:</strong> Los botones de monto sugerido se ajustan automáticamente según tu moneda configurada (CLP, USD, BRL).
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sistema de Abonos -->
+            <section id="abonos" class="content-section mb-12">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                        <span class="text-4xl">💵</span> Sistema de Abonos
+                        <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-3 py-1 rounded-full">NUEVO v1.1.0</span>
+                    </h2>
+                    <p class="text-gray-700 text-lg mb-6">
+                        El sistema de abonos te permite registrar pagos parciales o completos a cualquier deuda. El procesamiento inteligente completa automáticamente las cuotas cuando el monto del abono lo permite.
+                    </p>
+
+                    <div class="bg-indigo-50 border-l-4 border-indigo-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-indigo-900 text-xl mb-4">💡 ¿Cómo funciona?</h3>
+                        <ul class="space-y-3 text-gray-700 text-lg">
+                            <li><strong>Para deudas con cuotas:</strong> El abono se aplica primero a completar la cuota actual. Si el monto es mayor, el sistema completa automáticamente las siguientes cuotas y el remanente queda registrado como abono parcial de la próxima cuota pendiente.</li>
+                            <li><strong>Para deudas sin cuotas:</strong> El abono se descuenta directamente del monto total adeudado. Si el abono cubre el total, la deuda se marca automáticamente como pagada.</li>
                         </ul>
-                    </li>
-                    <li>Usa los <strong>botones de montos sugeridos</strong> para agregar rápido (+1.000, +5.000, etc.)</li>
-                    <li>Haz clic en <strong>"Agregar"</strong></li>
-                </ol>
-            </div>
+                    </div>
 
-            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
-                <p class="text-yellow-900">
-                    <strong>⚠️ Importante:</strong> Los botones de monto sugerido se ajustan automáticamente según tu moneda configurada (CLP, USD, BRL).
-                </p>
-            </div>
-            
-            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-4">
-                <h3 class="font-bold text-green-900 mb-2">📎 Archivos Adjuntos (Opcional)</h3>
-                <p class="text-gray-700 mb-2">
-                    Puedes adjuntar archivos al crear una deuda:
-                </p>
-                <ul class="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                    <li><strong>Comprobantes:</strong> Tickets, recibos, etc.</li>
-                    <li><strong>PDFs de contratos:</strong> Acuerdos escritos</li>
-                    <li><strong>Capturas de pantalla:</strong> Conversaciones, transferencias</li>
-                    <li><strong>Formatos permitidos:</strong> PDF, PNG, JPG, JPEG, DOC, DOCX, TXT</li>
-                    <li><strong>Tamaño máximo:</strong> 16MB por archivo</li>
-                </ul>
-                <p class="text-gray-700 mt-2">
-                    Los archivos se organizan automáticamente y puedes descargarlos en cualquier momento.
-                </p>
-            </div>
-        </div>
-    </section>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-blue-900 text-xl mb-4">📝 Cómo agregar un abono:</h3>
+                        <ol class="list-decimal list-inside space-y-3 text-gray-700 text-lg">
+                            <li>Accede al detalle del deudor</li>
+                            <li>Ubica la deuda pendiente a la que deseas abonar</li>
+                            <li>Haz clic en el botón índigo <strong>"💰 Agregar Abono"</strong></li>
+                            <li>Ingresa el monto que deseas abonar</li>
+                            <li>Revisa los tips informativos según el tipo de deuda</li>
+                            <li>Confirma la operación y el sistema procesará el abono automáticamente</li>
+                        </ol>
+                    </div>
 
-    <!-- Sección: Evidencias de Pago -->
-    <section id="evidencias" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span class="text-3xl">📄</span> Evidencias de Pago
-        </h2>
-        <div class="space-y-4">
-            <p class="text-gray-700">
-                Puedes adjuntar evidencias de pago en cualquier momento durante el seguimiento de una deuda.
-            </p>
-            
-            <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
-                <h3 class="font-bold text-purple-900 mb-2">📝 Para adjuntar evidencias:</h3>
-                <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                    <li>Ve al detalle del deudor</li>
-                    <li>Encuentra la deuda correspondiente</li>
-                    <li>Haz clic en el botón <strong>"Adjuntar Evidencia"</strong> (morado)</li>
-                    <li>Selecciona uno o más archivos (comprobantes de transferencia, fotos de pagos, etc.)</li>
-                    <li>Haz clic en <strong>"Subir Archivos"</strong></li>
-                </ol>
-            </div>
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-lg">
+                        <h3 class="font-bold text-purple-900 text-xl mb-4">📊 Ejemplos:</h3>
+                        <div class="space-y-4 text-gray-700">
+                            <div>
+                                <p class="font-semibold">Caso 1: Abono parcial</p>
+                                <p>Deuda: $12.000 en 3 cuotas ($4.000 c/u) → Abono: $2.000</p>
+                                <p class="text-sm text-purple-700 mt-1">✓ Resultado: Abono parcial de $2.000 en cuota actual (falta $2.000)</p>
+                            </div>
+                            <div>
+                                <p class="font-semibold">Caso 2: Completa múltiples cuotas</p>
+                                <p>Deuda: $12.000 en 3 cuotas → Abono: $10.000</p>
+                                <p class="text-sm text-purple-700 mt-1">✓ Resultado: 2 cuotas completas + $2.000 de abono en cuota 3</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                <h3 class="font-bold text-blue-900 mb-2">💡 Ventajas:</h3>
-                <ul class="list-disc list-inside space-y-1 text-gray-700">
-                    <li><strong>Respaldo:</strong> Mantén evidencia de todos los pagos recibidos</li>
-                    <li><strong>Organización:</strong> Archivos separados por deuda automáticamente</li>
-                    <li><strong>Accesibilidad:</strong> Descarga cuando necesites verificar</li>
-                    <li><strong>Contador visible:</strong> Ve cuántos documentos tiene cada deuda</li>
-                    <li><strong>En PDFs:</strong> Los reportes muestran cantidad de archivos adjuntos</li>
-                </ul>
-            </div>
-            
-            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
-                <p class="text-yellow-900">
-                    <strong>🔒 Seguridad:</strong> Solo tú puedes ver y descargar los archivos de tus deudas. Los archivos están organizados en carpetas privadas por usuario.
-                </p>
-            </div>
-        </div>
-    </section>
+            <!-- Evidencias de Pago -->
+            <section id="evidencias" class="content-section mb-12">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                        <span class="text-4xl">📄</span> Evidencias de Pago
+                    </h2>
+                    <p class="text-gray-700 text-lg mb-6">
+                        Puedes adjuntar evidencias de pago (comprobantes, capturas de pantalla, etc.) en cualquier momento durante el seguimiento de una deuda.
+                    </p>
+                    
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-purple-900 text-xl mb-4">📝 Para adjuntar evidencias:</h3>
+                        <ol class="list-decimal list-inside space-y-3 text-gray-700 text-lg">
+                            <li>Accede al detalle del deudor</li>
+                            <li>Ubica la deuda correspondiente</li>
+                            <li>Haz clic en el botón <strong>"Adjuntar Evidencia"</strong></li>
+                            <li>Selecciona uno o varios archivos desde tu dispositivo</li>
+                            <li>Haz clic en <strong>"Subir Archivos"</strong> para confirmar</li>
+                        </ol>
+                    </div>
 
-    <!-- Sección: Sistema de Cuotas -->
-    <section id="cuotas" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span class="text-3xl">📊</span> Sistema de Cuotas
-        </h2>
-        <div class="space-y-4">
-            <p class="text-gray-700">
-                El sistema de cuotas te permite hacer seguimiento de deudas que se pagan en partes iguales.
-            </p>
-
-            <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
-                <h3 class="font-bold text-purple-900 mb-2">🔢 ¿Cómo funcionan las cuotas?</h3>
-                <ul class="list-disc list-inside space-y-2 text-gray-700">
-                    <li>Divide el monto total en partes iguales automáticamente</li>
-                    <li>Muestra una barra de progreso visual</li>
-                    <li>Permite marcar cuotas como pagadas una a una</li>
-                    <li>Calcula el monto restante automáticamente</li>
-                </ul>
-            </div>
-
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                <h3 class="font-bold text-blue-900 mb-2">📝 Ejemplo práctico:</h3>
-                <p class="text-gray-700 mb-2">
-                    Si prestas <strong>$100.000</strong> en <strong>5 cuotas</strong>:
-                </p>
-                <ul class="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                    <li>Cada cuota = $20.000</li>
-                    <li>Cuando marques 1 cuota pagada → Resta $20.000</li>
-                    <li>Cuando marques 2 cuotas pagadas → Resta $40.000</li>
-                    <li>Y así sucesivamente...</li>
-                </ul>
-            </div>
-
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mt-4">
-                <h3 class="font-bold text-blue-900 mb-2">✅ Pagar cuotas:</h3>
-                <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                    <li>Ve al detalle del deudor</li>
-                    <li>Encuentra la deuda con cuotas</li>
-                    <li>Haz clic en <strong>"Pagar Cuota"</strong></li>
-                    <li>La barra de progreso se actualizará automáticamente</li>
-                    <li>Cuando todas las cuotas estén pagadas, la deuda se marcará como completada</li>
-                </ol>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sección: KPIs -->
-    <section id="kpis" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span class="text-3xl">📈</span> Entender los KPIs
-        </h2>
-        <div class="space-y-4">
-            <p class="text-gray-700 mb-4">
-                En la parte superior del Dashboard verás 4 indicadores clave (KPIs) que te dan una visión general de tu situación:
-            </p>
-
-            <!-- KPI 1 -->
-            <div class="border-l-4 border-red-500 bg-red-50 p-4 rounded">
-                <h3 class="font-bold text-red-900 mb-2 flex items-center gap-2">
-                    🔴 Total Por Cobrar
-                </h3>
-                <p class="text-gray-700">
-                    <strong>¿Qué es?</strong> La suma de TODAS las deudas registradas (sin importar si han pagado algo o no).
-                </p>
-                <p class="text-gray-700 mt-2">
-                    <strong>Ejemplo:</strong> Si tienes 3 deudas de $10.000, $20.000 y $30.000, este indicador mostrará $60.000.
-                </p>
-            </div>
-
-            <!-- KPI 2 -->
-            <div class="border-l-4 border-green-500 bg-green-50 p-4 rounded">
-                <h3 class="font-bold text-green-900 mb-2 flex items-center gap-2">
-                    🟢 Total Cobrado
-                </h3>
-                <p class="text-gray-700">
-                    <strong>¿Qué es?</strong> La suma de todo el dinero que ya te han pagado.
-                </p>
-                <p class="text-gray-700 mt-2">
-                    <strong>Incluye:</strong> Deudas pagadas completamente + cuotas pagadas de deudas en progreso.
-                </p>
-            </div>
-
-            <!-- KPI 3 -->
-            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded">
-                <h3 class="font-bold text-blue-900 mb-2 flex items-center gap-2">
-                    🔵 Deudores
-                </h3>
-                <p class="text-gray-700">
-                    <strong>¿Qué es?</strong> El número total de personas registradas como deudoras.
-                </p>
-                <p class="text-gray-700 mt-2">
-                    <strong>Nota:</strong> Un deudor puede tener múltiples deudas asociadas.
-                </p>
-            </div>
-
-            <!-- KPI 4 -->
-            <div class="border-l-4 border-yellow-500 bg-yellow-50 p-4 rounded">
-                <h3 class="font-bold text-yellow-900 mb-2 flex items-center gap-2">
-                    🟡 Deudores Activos
-                </h3>
-                <p class="text-gray-700">
-                    <strong>¿Qué es?</strong> Cuántos deudores aún tienen deudas pendientes (no han pagado todo).
-                </p>
-                <p class="text-gray-700 mt-2">
-                    <strong>Ejemplo:</strong> Si tienes 5 deudores, pero 2 ya pagaron completamente, este indicador mostrará 3.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sección: Buscador y Filtros -->
-    <section id="buscador" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span class="text-3xl">🔍</span> Usar el Buscador y Filtros
-        </h2>
-        <div class="space-y-4">
-            <p class="text-gray-700">
-                El buscador te ayuda a encontrar deudores rápidamente y ordenar tu lista según tus necesidades.
-            </p>
-
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                <h3 class="font-bold text-blue-900 mb-2">🔎 Buscar por Nombre</h3>
-                <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                    <li>Escribe el nombre del deudor en el campo de búsqueda</li>
-                    <li>La búsqueda no distingue mayúsculas de minúsculas</li>
-                    <li>Puedes buscar por nombre parcial (ej: "Juan" encontrará "Juan Pérez")</li>
-                    <li>Haz clic en <strong>"Aplicar"</strong> para filtrar</li>
-                </ol>
-            </div>
-
-            <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
-                <h3 class="font-bold text-purple-900 mb-2">📊 Opciones de Ordenamiento</h3>
-                <ul class="space-y-2 text-gray-700">
-                    <li><strong>A-Z</strong>: Orden alfabético ascendente (Ana → Zoe)</li>
-                    <li><strong>Z-A</strong>: Orden alfabético descendente (Zoe → Ana)</li>
-                    <li><strong>Deuda mayor</strong>: Muestra primero quien más debe</li>
-                    <li><strong>Deuda menor</strong>: Muestra primero quien menos debe</li>
-                </ul>
-            </div>
-
-            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
-                <p class="text-green-900">
-                    <strong>💡 Consejo:</strong> Usa el botón <strong>"Limpiar"</strong> para volver a ver todos tus deudores sin filtros.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sección: Exportar PDF -->
-    <section id="exportar" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span class="text-3xl">📄</span> Exportar a PDF
-        </h2>
-        <div class="space-y-4">
-            <p class="text-gray-700">
-                CuentasClaras te permite exportar reportes profesionales en formato PDF.
-            </p>
-
-            <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
-                <h3 class="font-bold text-purple-900 mb-2">📋 Exportar Deudor Individual</h3>
-                <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                    <li>Ve al detalle de un deudor</li>
-                    <li>Haz clic en el botón morado <strong>"Exportar a PDF"</strong></li>
-                    <li>Se descargará un PDF con:
-                        <ul class="list-disc list-inside ml-6 mt-2">
-                            <li>Información del deudor</li>
-                            <li>Lista completa de sus deudas</li>
-                            <li>Totales y estadísticas</li>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-blue-900 text-xl mb-4">💡 Ventajas:</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 text-lg">
+                            <li><strong>Respaldo:</strong> Evidencia de todos los pagos recibidos</li>
+                            <li><strong>Organización:</strong> Archivos separados por deuda automáticamente</li>
+                            <li><strong>Accesibilidad:</strong> Descarga cuando necesites verificar</li>
+                            <li><strong>Contador visible:</strong> Ve cuántos documentos tiene cada deuda</li>
                         </ul>
-                    </li>
-                </ol>
-            </div>
+                    </div>
 
-            <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
-                <h3 class="font-bold text-purple-900 mb-2">📊 Exportar Reporte Completo</h3>
-                <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                    <li>Desde el Dashboard, haz clic en <strong>"Exportar Todo a PDF"</strong></li>
-                    <li>Se generará un reporte con:
-                        <ul class="list-disc list-inside ml-6 mt-2">
-                            <li>Resumen general de todos tus deudores</li>
-                            <li>Estadísticas globales</li>
-                            <li>Detalle de cada deudor con sus deudas</li>
-                            <li>Fecha y hora del reporte</li>
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg">
+                        <p class="text-yellow-900 text-lg">
+                            <strong>⚠️ Nota:</strong> Funcionalidad de adjuntos temporalmente deshabilitada en UI, pero disponible en el código.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sistema de Cuotas -->
+            <section id="cuotas" class="content-section mb-12">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                        <span class="text-4xl">📊</span> Sistema de Cuotas
+                    </h2>
+                    <p class="text-gray-700 text-lg mb-6">
+                        El sistema de cuotas te permite gestionar y hacer seguimiento de deudas que se pagarán en partes iguales a lo largo del tiempo.
+                    </p>
+
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-purple-900 text-xl mb-4">🔢 ¿Cómo funcionan las cuotas?</h3>
+                        <ul class="list-disc list-inside space-y-3 text-gray-700 text-lg">
+                            <li>El sistema divide automáticamente el monto total en partes iguales</li>
+                            <li>Visualizas el progreso mediante una barra de estado</li>
+                            <li>Puedes marcar cuotas como pagadas una por una</li>
+                            <li>El monto restante se calcula y actualiza automáticamente</li>
                         </ul>
-                    </li>
-                </ol>
-            </div>
+                    </div>
 
-            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
-                <p class="text-yellow-900">
-                    <strong>📌 Nota:</strong> Los PDFs respetan tu configuración de moneda y muestran todos los montos en el formato correcto.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sección: Perfil -->
-    <section id="perfil" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span class="text-3xl">⚙️</span> Configurar tu Perfil
-        </h2>
-        <div class="space-y-4">
-            <p class="text-gray-700">
-                Personaliza tu experiencia configurando tu perfil.
-            </p>
-
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                <h3 class="font-bold text-blue-900 mb-2">💱 Cambiar Moneda</h3>
-                <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                    <li>Ve a <strong>Perfil</strong> desde el menú superior</li>
-                    <li>Selecciona tu moneda preferida:
-                        <ul class="list-disc list-inside ml-6 mt-2">
-                            <li><strong>CLP</strong>: Peso Chileno ($)</li>
-                            <li><strong>USD</strong>: Dólar Estadounidense ($)</li>
-                            <li><strong>BRL</strong>: Real Brasileño (R$)</li>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-blue-900 text-xl mb-4">📝 Ejemplo práctico:</h3>
+                        <p class="text-gray-700 text-lg mb-3">
+                            Si prestas <strong>$100.000</strong> en <strong>5 cuotas</strong>:
+                        </p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 text-lg ml-4">
+                            <li>Cada cuota = $20.000</li>
+                            <li>1 cuota pagada → Restante: $80.000</li>
+                            <li>2 cuotas pagadas → Restante: $60.000</li>
+                            <li>5 cuotas pagadas → Deuda completada automáticamente ✓</li>
                         </ul>
-                    </li>
-                    <li>Haz clic en <strong>"Actualizar"</strong></li>
-                    <li>Todos los montos se mostrarán en tu moneda seleccionada</li>
-                </ol>
-            </div>
+                    </div>
 
-            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
-                <p class="text-green-900">
-                    <strong>💡 Consejo:</strong> Los botones de monto sugerido en "Agregar Deuda" se ajustan automáticamente a tu moneda.
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+                        <h3 class="font-bold text-green-900 text-xl mb-4">✅ Pagar cuotas:</h3>
+                        <ol class="list-decimal list-inside space-y-3 text-gray-700 text-lg">
+                            <li>Ve al detalle del deudor</li>
+                            <li>Encuentra la deuda con cuotas</li>
+                            <li>Haz clic en <strong>"Pagar Cuota"</strong></li>
+                            <li>La barra de progreso se actualizará automáticamente</li>
+                            <li>Cuando pagues la última cuota, la deuda se marca como completada</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Historial -->
+            <section id="historial" class="content-section mb-12">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                        <span class="text-4xl">📋</span> Historial de Movimientos
+                    </h2>
+                    <p class="text-gray-700 text-lg mb-6">
+                        CuentasClaras registra automáticamente todas las operaciones que realizas sobre las deudas, creando un historial completo y auditable.
+                    </p>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-blue-900 text-xl mb-4">📝 Cómo acceder al historial:</h3>
+                        <ul class="list-disc list-inside space-y-3 text-gray-700 text-lg">
+                            <li><strong>Historial por deuda:</strong> Accede al detalle de un deudor y despliega el timeline de cada deuda específica</li>
+                            <li><strong>Historial general:</strong> Haz clic en "Historial" en el menú superior para visualizar todos los movimientos del sistema</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-purple-900 text-xl mb-4">🔍 Filtros disponibles:</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700 text-lg">
+                            <li>Por deudor específico</li>
+                            <li>Por tipo de acción (creada, editada, abono agregado, cuota pagada, etc.)</li>
+                            <li>Por rango de fechas (desde/hasta)</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+                        <h3 class="font-bold text-green-900 text-xl mb-4">✨ Tipos de acciones registradas:</h3>
+                        <ul class="space-y-2 text-gray-700 text-lg">
+                            <li>🔵 Deuda creada</li>
+                            <li>🟡 Deuda editada</li>
+                            <li>💵 Abono agregado <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">NUEVO</span></li>
+                            <li>🔵 Cuota pagada</li>
+                            <li>🟢 Deuda pagada completamente</li>
+                            <li>🔴 Deuda eliminada</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- KPIs -->
+            <section id="kpis" class="content-section mb-12">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                        <span class="text-4xl">📈</span> Entender los KPIs
+                    </h2>
+                    <p class="text-gray-700 text-lg mb-6">
+                        En la parte superior del Dashboard encontrarás 4 indicadores clave (KPIs) que te ofrecen una visión general y actualizada de tu situación financiera:
+                    </p>
+
+                    <div class="space-y-6">
+                        <!-- KPI 1 -->
+                        <div class="border-l-4 border-red-500 bg-red-50 p-6 rounded-lg">
+                            <h3 class="font-bold text-red-900 text-xl mb-3 flex items-center gap-2">
+                                🔴 Total Por Cobrar
+                            </h3>
+                            <p class="text-gray-700 text-lg mb-2">
+                                <strong>¿Qué es?</strong> La suma total de TODAS las deudas registradas en el sistema, independientemente de si han realizado pagos parciales o no.
+                            </p>
+                            <p class="text-gray-700 text-lg">
+                                <strong>Ejemplo:</strong> 3 deudas de $10.000, $20.000 y $30.000 = $60.000
+                            </p>
+                        </div>
+
+                        <!-- KPI 2 -->
+                        <div class="border-l-4 border-green-500 bg-green-50 p-6 rounded-lg">
+                            <h3 class="font-bold text-green-900 text-xl mb-3 flex items-center gap-2">
+                                🟢 Total Cobrado
+                            </h3>
+                            <p class="text-gray-700 text-lg mb-2">
+                                <strong>¿Qué es?</strong> La suma de todo el dinero que ya te han pagado.
+                            </p>
+                            <p class="text-gray-700 text-lg">
+                                <strong>Incluye:</strong> Deudas pagadas + cuotas pagadas + abonos parciales
+                            </p>
+                        </div>
+
+                        <!-- KPI 3 -->
+                        <div class="border-l-4 border-blue-500 bg-blue-50 p-6 rounded-lg">
+                            <h3 class="font-bold text-blue-900 text-xl mb-3 flex items-center gap-2">
+                                🔵 Deudores
+                            </h3>
+                            <p class="text-gray-700 text-lg">
+                                <strong>¿Qué es?</strong> El número total de personas registradas. Un deudor puede tener múltiples deudas.
+                            </p>
+                        </div>
+
+                        <!-- KPI 4 -->
+                        <div class="border-l-4 border-yellow-500 bg-yellow-50 p-6 rounded-lg">
+                            <h3 class="font-bold text-yellow-900 text-xl mb-3 flex items-center gap-2">
+                                🟡 Deudores Activos
+                            </h3>
+                            <p class="text-gray-700 text-lg mb-2">
+                                <strong>¿Qué es?</strong> Deudores que aún tienen deudas pendientes.
+                            </p>
+                            <p class="text-gray-700 text-lg">
+                                <strong>Ejemplo:</strong> 5 deudores, 2 pagaron todo = 3 activos
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Buscador y Filtros -->
+            <section id="buscador" class="content-section mb-12">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                        <span class="text-4xl">🔍</span> Buscador y Filtros
+                    </h2>
+                    <p class="text-gray-700 text-lg mb-6">
+                        El buscador y los filtros te permiten encontrar deudores rápidamente y organizar tu lista según diferentes criterios.
+                    </p>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-blue-900 text-xl mb-4">🔎 Buscar por Nombre</h3>
+                        <ol class="list-decimal list-inside space-y-2 text-gray-700 text-lg">
+                            <li>Escribe el nombre del deudor en el campo de búsqueda</li>
+                            <li>La búsqueda no distingue mayúsculas/minúsculas</li>
+                            <li>Puedes buscar por nombre parcial</li>
+                            <li>Haz clic en <strong>"Aplicar"</strong></li>
+                        </ol>
+                    </div>
+
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-purple-900 text-xl mb-4">📊 Opciones de Ordenamiento</h3>
+                        <ul class="space-y-2 text-gray-700 text-lg">
+                            <li><strong>A-Z:</strong> Orden alfabético ascendente</li>
+                            <li><strong>Z-A:</strong> Orden alfabético descendente</li>
+                            <li><strong>Deuda mayor:</strong> Muestra primero quien más debe</li>
+                            <li><strong>Deuda menor:</strong> Muestra primero quien menos debe</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+                        <p class="text-green-900 text-lg">
+                            <strong>💡 Consejo:</strong> Usa el botón <strong>"Limpiar"</strong> para quitar todos los filtros.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Exportar PDF -->
+            <section id="exportar" class="content-section mb-12">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                        <span class="text-4xl">📄</span> Exportar a PDF
+                    </h2>
+                    <p class="text-gray-700 text-lg mb-6">
+                        CuentasClaras te permite generar y exportar reportes profesionales en formato PDF con toda la información de tus deudas.
+                    </p>
+
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-purple-900 text-xl mb-4">📋 Exportar Deudor Individual</h3>
+                        <ol class="list-decimal list-inside space-y-3 text-gray-700 text-lg">
+                            <li>Ve al detalle de un deudor</li>
+                            <li>Haz clic en el botón morado <strong>"Exportar a PDF"</strong></li>
+                            <li>Se descargará un PDF con:
+                                <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
+                                    <li>Información del deudor</li>
+                                    <li>Lista completa de sus deudas</li>
+                                    <li>Totales y estadísticas</li>
+                                    <li>Marca de agua de seguridad con timestamp</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-purple-900 text-xl mb-4">📊 Exportar Reporte Completo</h3>
+                        <ol class="list-decimal list-inside space-y-3 text-gray-700 text-lg">
+                            <li>Desde el Dashboard, haz clic en <strong>"Exportar Todo a PDF"</strong></li>
+                            <li>Se generará un reporte con:
+                                <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
+                                    <li>Resumen general de todos tus deudores</li>
+                                    <li>Estadísticas globales</li>
+                                    <li>Detalle de cada deudor con sus deudas</li>
+                                    <li>Fecha y hora del reporte</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg">
+                        <p class="text-yellow-900 text-lg">
+                            <strong>📌 Nota:</strong> Los PDFs respetan tu configuración de moneda y formato mejorado (sin ceros innecesarios).
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Configurar Perfil -->
+            <section id="perfil" class="content-section mb-12">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4 flex items-center gap-3">
+                        <span class="text-4xl">⚙️</span> Configurar tu Perfil
+                    </h2>
+                    <p class="text-gray-700 text-lg mb-6">
+                        Personaliza tu experiencia en CuentasClaras configurando las opciones de tu perfil de usuario.
+                    </p>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg mb-6">
+                        <h3 class="font-bold text-blue-900 text-xl mb-4">💱 Cambiar Moneda</h3>
+                        <ol class="list-decimal list-inside space-y-3 text-gray-700 text-lg">
+                            <li>Ve a <strong>Perfil</strong> desde el menú superior</li>
+                            <li>Selecciona tu moneda preferida:
+                                <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
+                                    <li><strong>CLP:</strong> Peso Chileno ($)</li>
+                                    <li><strong>USD:</strong> Dólar Estadounidense ($)</li>
+                                    <li><strong>BRL:</strong> Real Brasileño (R$)</li>
+                                </ul>
+                            </li>
+                            <li>Haz clic en <strong>"Actualizar"</strong></li>
+                            <li>Todos los montos se mostrarán en tu moneda</li>
+                        </ol>
+                    </div>
+
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg">
+                        <p class="text-green-900 text-lg">
+                            <strong>💡 Consejo:</strong> Los botones de monto sugerido y formato de números se ajustan automáticamente a tu moneda.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer de ayuda -->
+            <div class="bg-gradient-to-r from-green-500 to-blue-500 rounded-xl p-8 text-center text-white">
+                <h3 class="text-2xl font-bold mb-4">¿Necesitas más ayuda?</h3>
+                <p class="text-lg mb-6">
+                    Si tienes dudas adicionales o encuentras algún problema con la aplicación, no dudes en contactarnos.
                 </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="{{ url_for('main.dashboard') }}" 
+                       class="bg-white hover:bg-gray-100 text-green-600 px-8 py-3 rounded-lg font-bold transition duration-200">
+                        Volver al Dashboard
+                    </a>
+                    <a href="{{ url_for('main.index') }}" 
+                       class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-8 py-3 rounded-lg font-bold transition duration-200">
+                        Ir al Inicio
+                    </a>
+                </div>
             </div>
         </div>
-    </section>
-
-    <!-- Contacto y Soporte -->
-    <div class="bg-gradient-to-r from-green-500 to-blue-500 rounded-xl p-8 text-center text-white">
-        <h2 class="text-2xl font-bold mb-4">¿Necesitas más ayuda?</h2>
-        <p class="text-lg mb-6">
-            Si tienes preguntas adicionales o encuentras algún problema, no dudes en contactarnos.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="{{ url_for('main.dashboard') }}" 
-               class="bg-white hover:bg-gray-100 text-green-600 px-8 py-3 rounded-lg font-bold transition duration-200">
-                Volver al Dashboard
-            </a>
-            <a href="{{ url_for('main.index') }}" 
-               class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-8 py-3 rounded-lg font-bold transition duration-200">
-                Ir al Inicio
-            </a>
-        </div>
-    </div>
+    </main>
 </div>
 
-<!-- Botón flotante para volver arriba -->
-<button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
-        class="fixed bottom-6 right-6 bg-green-600 hover:bg-green-700 text-white p-4 rounded-full shadow-lg transition duration-200">
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-    </svg>
-</button>
+<script>
+// Toggle sidebar en móvil
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+}
+
+// Navegación entre secciones
+function navigateTo(sectionId) {
+    // Cerrar sidebar en móvil
+    if (window.innerWidth < 1024) {
+        toggleSidebar();
+    }
+    
+    // Actualizar enlaces activos
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('bg-green-100', 'border-l-4', 'border-green-600');
+    });
+    
+    const activeLink = document.querySelector(`a[href="#${sectionId}"]`);
+    if (activeLink) {
+        activeLink.classList.add('bg-green-100', 'border-l-4', 'border-green-600');
+    }
+    
+    // Scroll suave a la sección
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+// Detectar sección visible al hacer scroll
+const observerOptions = {
+    root: null,
+    rootMargin: '-50px 0px -50% 0px',
+    threshold: 0
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const sectionId = entry.target.id;
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('bg-green-100', 'border-l-4', 'border-green-600');
+            });
+            
+            const activeLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
+            if (activeLink) {
+                activeLink.classList.add('bg-green-100', 'border-l-4', 'border-green-600');
+            }
+        }
+    });
+}, observerOptions);
+
+// Observar todas las secciones
+document.querySelectorAll('.content-section').forEach(section => {
+    observer.observe(section);
+});
+
+// Marcar sección inicial como activa
+document.addEventListener('DOMContentLoaded', () => {
+    const firstLink = document.querySelector('.nav-link');
+    if (firstLink) {
+        firstLink.classList.add('bg-green-100', 'border-l-4', 'border-green-600');
+    }
+});
+</script>
 {% endblock %}

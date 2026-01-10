@@ -208,3 +208,12 @@ def export_all_pdf():
         as_attachment=True,
         download_name=filename
     )
+
+
+@main_bp.route('/docs')
+def docs():
+    """
+    Página de documentación con navegación lateral
+    Muestra toda la documentación del proyecto de forma organizada
+    """
+    return render_template('docs.html')
